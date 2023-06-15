@@ -6,16 +6,12 @@ import tdld4k.controllers.GameRotationControl
 import tdld4k.player.GamePlayer
 import java.awt.Cursor
 import java.awt.MouseInfo
-import java.awt.Point
-import java.awt.Toolkit
-import java.io.File
-import javax.imageio.ImageIO
 
 class ExampleMouseController(
     private var singleClient: GameSingleClient,
     player: GamePlayer,
     moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
-) : GameRotationControl(player, moveMouseWithRobotInput, singleClient) {
+) : GameRotationControl(singleClient, player, moveMouseWithRobotInput) {
     var firstCustomCursor: Cursor = Cursor.getDefaultCursor()
     var secondCustomCursor: Cursor = Cursor.getDefaultCursor()
 
@@ -26,5 +22,4 @@ class ExampleMouseController(
             singleClient.setCurrentCursor(secondCustomCursor)
         }
     }
-
 }

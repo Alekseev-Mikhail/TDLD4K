@@ -3,29 +3,36 @@ package example
 import tdld4k.GameSingleClient
 import tdld4k.controllers.GameMoveMouseWithRobotInput
 import tdld4k.controllers.GameMovementControl
-import tdld4k.world.GameWorld
 import tdld4k.player.GamePlayer
+import tdld4k.world.GameWorld
 import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.*
+import java.awt.event.KeyEvent.VK_DOWN
+import java.awt.event.KeyEvent.VK_END
+import java.awt.event.KeyEvent.VK_ESCAPE
+import java.awt.event.KeyEvent.VK_F11
+import java.awt.event.KeyEvent.VK_HOME
+import java.awt.event.KeyEvent.VK_LEFT
+import java.awt.event.KeyEvent.VK_RIGHT
+import java.awt.event.KeyEvent.VK_UP
 import javax.swing.Timer
 
 class ExampleKeyboardController(
-    private val singleClient: GameSingleClient,
-    private val player: GamePlayer,
-    private var isFullscreen: Boolean,
-    private val moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
+    world: GameWorld,
     forward: Int,
     back: Int,
     left: Int,
     right: Int,
-    world: GameWorld,
+    private val singleClient: GameSingleClient,
+    private val player: GamePlayer,
+    private var isFullscreen: Boolean,
+    private val moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
 ) : GameMovementControl(
+    world,
     player,
     forward,
     back,
     left,
     right,
-    world,
 ) {
     private var isEscape = false
     private val fovUp = Timer(1_000 / player.maxFps) {

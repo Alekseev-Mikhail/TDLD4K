@@ -10,8 +10,7 @@ class GameWorld(
     map: String,
     mapWidth: Int,
 ) {
-
-    val map = map.map { fromCode(it) }.chunked(mapWidth)
+    private val map = map.map { fromCode(it) }.chunked(mapWidth)
 
     operator fun get(x: Int, y: Int): GameShape? = map[y][x]
 
@@ -24,5 +23,4 @@ class GameWorld(
         }
         return GameFullTile(errorColor)
     }
-
 }

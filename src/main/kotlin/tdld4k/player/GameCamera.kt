@@ -1,6 +1,9 @@
 package tdld4k.player
 
-import tdld4k.math.*
+import tdld4k.math.GameRayCastingOutput
+import tdld4k.math.GameRayWork
+import tdld4k.math.Parallelogram
+import tdld4k.math.Vector2Int
 import tdld4k.world.GameShape
 import tdld4k.world.GameWorld
 import java.awt.Graphics
@@ -60,7 +63,7 @@ class GameCamera(private val world: GameWorld, private val player: GamePlayer) :
                     currentLeftBot!!,
                     Vector2Int(x, (height / 2 - lastColumn / 2).roundToInt()),
                     Vector2Int(x, (height / 2 + lastColumn / 2).roundToInt()),
-                )
+                ),
             )
         }
 

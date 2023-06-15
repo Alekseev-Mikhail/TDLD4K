@@ -4,17 +4,17 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.Delegates
 
 abstract class GamePlayer(
-    var isFreezeMovement: Boolean,
-    var isFreezeRotation: Boolean,
-    val movementSpeed: Double,
-    val rotationSpeed: Double,
-    val maxFps: Int,
     x: Double,
     y: Double,
     direction: Double,
     fov: Double,
     quality: Double,
     renderDistance: Double,
+    val movementSpeed: Double,
+    val rotationSpeed: Double,
+    val maxFps: Int,
+    var isFreezeMovement: Boolean,
+    var isFreezeRotation: Boolean,
 ) {
     var x: Double by Delegates.observable(x) { _, _, _ -> listeners.forEach { it.run() } }
     var y: Double by Delegates.observable(y) { _, _, _ -> listeners.forEach { it.run() } }

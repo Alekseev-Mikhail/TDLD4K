@@ -3,7 +3,11 @@ package tdld4k
 import tdld4k.player.GameCamera
 import tdld4k.player.GamePlayer
 import tdld4k.world.GameWorld
-import java.awt.*
+import java.awt.Cursor
+import java.awt.Dimension
+import java.awt.GraphicsEnvironment
+import java.awt.Point
+import java.awt.Toolkit
 import java.awt.event.KeyListener
 import java.awt.event.MouseMotionListener
 import java.awt.image.BufferedImage
@@ -18,7 +22,9 @@ class GameSingleClient(
     private val camera = GameCamera(world, player)
     private var currentCursor = Cursor.getDefaultCursor()
     private val blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), Point(0, 0), "blank cursor"
+        BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
+        Point(0, 0),
+        "blank cursor",
     )
 
     fun initializationFrame(keyboardController: KeyListener, mouseController: MouseMotionListener) {
@@ -68,14 +74,4 @@ class GameSingleClient(
     fun setVisibleCursor() {
         playerFrame.contentPane.cursor = currentCursor
     }
-
-    fun startGame() {}
-
-    fun pauseGame() {}
-
-    fun resumeGame() {}
-
-    fun stopGame() {}
-
-    fun killGame() {}
 }

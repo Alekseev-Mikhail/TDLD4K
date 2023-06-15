@@ -1,19 +1,19 @@
 package tdld4k.controllers
 
 import tdld4k.math.GameRayWork
-import tdld4k.world.GameWorld
 import tdld4k.player.GamePlayer
+import tdld4k.world.GameWorld
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.Timer
 
 abstract class GameMovementControl(
+    world: GameWorld,
     private val player: GamePlayer,
     private val forward: Int,
     private val back: Int,
     private val left: Int,
     private val right: Int,
-    world: GameWorld,
 ) : KeyAdapter() {
     private val rayWork = GameRayWork(world, player)
 

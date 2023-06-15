@@ -1,15 +1,12 @@
 package tdld4k.controllers
 
 import tdld4k.GameSingleClient
-import java.awt.Frame
 import java.awt.Robot
-import java.awt.Toolkit
 import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionListener
-import javax.swing.JFrame
 
 abstract class GameMoveMouseWithRobot(
-    private val singleClient: GameSingleClient,
+    singleClient: GameSingleClient,
     private var moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
 ) : MouseMotionListener {
     private val robot = Robot()
@@ -27,6 +24,5 @@ abstract class GameMoveMouseWithRobot(
     }
 
     override fun mouseDragged(e: MouseEvent?) {
-
     }
 }
