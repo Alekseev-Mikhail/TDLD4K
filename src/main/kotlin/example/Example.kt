@@ -14,23 +14,23 @@ import java.io.File
 import javax.imageio.ImageIO
 
 fun main() {
-    val map="11111111111111111" +
-            "1   4  1        1" +
-            "1   4    1 111111" +
-            "1   4 3  1      1" +
-            "1    11111111   1" +
-            "1          1    1" +
-            "1111 1111  1  111" +
-            "1          1  1 1" +
-            "1   111    1  1 1" +
-            "1               1" +
-            "111111     1  111" +
-            "1  1       1  1 1" +
-            "1     111111    1" +
-            "1  1            1" +
-            "1  11  1111   111" +
-            "1               1" +
-            "11111111111111111"
+    val map = "11111111111111111" +
+        "1   4  1        1" +
+        "1   4    1 111111" +
+        "1   4 3  1      1" +
+        "1    11111111   1" +
+        "1          1    1" +
+        "1111 1111  1  111" +
+        "1          1  1 1" +
+        "1   111    1  1 1" +
+        "1               1" +
+        "111111     1  111" +
+        "1  1       1  1 1" +
+        "1     111111    1" +
+        "1  1            1" +
+        "1  11  1111   111" +
+        "1               1" +
+        "11111111111111111"
     val mapWidth = 17
     val tileSize = 5
 
@@ -61,14 +61,14 @@ fun main() {
         isFreezeMovement = false,
         isFreezeRotation = false,
         6.0,
-        0.1,
+        0.4,
         60,
         10.0,
         10.0,
         0.0,
         70.0,
         0.1,
-        400.0
+        400.0,
     )
     val singleClient = GameSingleClient(player, world)
     val moveMouseWithRobotInput = GameMoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
@@ -85,10 +85,14 @@ fun main() {
     )
     val mouseController = ExampleMouseController(singleClient, player, moveMouseWithRobotInput)
     val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        ImageIO.read(File("src/main/resources/example/cursor.png")), Point(0, 0), "first custom cursor"
+        ImageIO.read(File("src/main/resources/example/cursor.png")),
+        Point(0, 0),
+        "first custom cursor",
     )
     val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        ImageIO.read(File("src/main/resources/example/cursor1.png")), Point(0, 0), "second custom cursor"
+        ImageIO.read(File("src/main/resources/example/cursor1.png")),
+        Point(0, 0),
+        "second custom cursor",
     )
 
     mouseController.firstCustomCursor = firstCustomCursor

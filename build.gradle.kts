@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.22"
+    id("com.zoltu.git-versioning") version "3.0.3"
 }
 
 group = "io.github"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
