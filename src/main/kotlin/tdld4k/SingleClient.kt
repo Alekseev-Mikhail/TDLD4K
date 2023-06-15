@@ -1,8 +1,8 @@
 package tdld4k
 
-import tdld4k.player.GameCamera
-import tdld4k.player.GamePlayer
-import tdld4k.world.GameWorld
+import tdld4k.player.PlayerCamera
+import tdld4k.player.Player
+import tdld4k.world.World
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
@@ -14,12 +14,12 @@ import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.JFrame.EXIT_ON_CLOSE
 
-class GameSingleClient(
-    private val player: GamePlayer,
-    world: GameWorld,
+class SingleClient(
+    private val player: Player,
+    world: World,
 ) {
     var playerFrame: JFrame = JFrame()
-    private val camera = GameCamera(world, player)
+    private val playerCamera = PlayerCamera(world, player)
     private var currentCursor = Cursor.getDefaultCursor()
     private val blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
         BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
@@ -28,7 +28,7 @@ class GameSingleClient(
     )
 
     fun initializationFrame(keyboardController: KeyListener, mouseController: MouseMotionListener) {
-        playerFrame.contentPane = camera.apply {
+        playerFrame.contentPane = playerCamera.apply {
             player.addListener { repaint() }
         }
         playerFrame.addKeyListener(keyboardController)

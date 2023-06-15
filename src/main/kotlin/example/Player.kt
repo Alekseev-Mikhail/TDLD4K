@@ -1,8 +1,8 @@
 package example
 
-import tdld4k.player.GamePlayer
+import tdld4k.player.Player
 
-class ExamplePlayer(
+class Player(
     x: Double,
     y: Double,
     direction: Double,
@@ -14,7 +14,7 @@ class ExamplePlayer(
     maxFps: Int,
     isFreezeMovement: Boolean,
     isFreezeRotation: Boolean,
-) : GamePlayer(
+) : Player(
     x,
     y,
     direction,

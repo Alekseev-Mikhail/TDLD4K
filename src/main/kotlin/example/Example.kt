@@ -1,11 +1,11 @@
 package example
 
-import tdld4k.GameSingleClient
-import tdld4k.controllers.GameMoveMouseWithRobotInput
+import tdld4k.SingleClient
+import tdld4k.controllers.MoveMouseWithRobotInput
 import tdld4k.math.Vector2Double
-import tdld4k.world.GameAABBTile
-import tdld4k.world.GameFullTile
-import tdld4k.world.GameWorld
+import tdld4k.world.AABBTile
+import tdld4k.world.FullTile
+import tdld4k.world.World
 import java.awt.Color.BLUE
 import java.awt.Color.DARK_GRAY
 import java.awt.Color.GRAY
@@ -42,13 +42,13 @@ fun main() {
     val tileSize = 5
 
     val tileTypes = mapOf(
-        Pair('1', GameFullTile(GRAY)),
-        Pair('2', GameFullTile(DARK_GRAY)),
-        Pair('3', GameAABBTile(YELLOW, Vector2Double(1.0, 1.0), Vector2Double(4.0, 4.0))),
-        Pair('4', GameAABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
+        Pair('1', FullTile(GRAY)),
+        Pair('2', FullTile(DARK_GRAY)),
+        Pair('3', AABBTile(YELLOW, Vector2Double(1.0, 1.0), Vector2Double(4.0, 4.0))),
+        Pair('4', AABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
     )
-    val world = GameWorld(' ', BLUE, tileTypes, tileSize, map, mapWidth)
-    val player = ExamplePlayer(
+    val world = World(map, mapWidth, ' ', BLUE, tileTypes, tileSize)
+    val player = Player(
         10.0,
         10.0,
         0.0,
@@ -61,9 +61,9 @@ fun main() {
         isFreezeMovement = false,
         isFreezeRotation = false,
     )
-    val singleClient = GameSingleClient(player, world)
-    val moveMouseWithRobotInput = GameMoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
-    val keyboardController = ExampleKeyboardController(
+    val singleClient = SingleClient(player, world)
+    val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
+    val keyboardController = KeyboardController(
         world,
         VK_W,
         VK_S,
@@ -74,7 +74,7 @@ fun main() {
         true,
         moveMouseWithRobotInput,
     )
-    val mouseController = ExampleMouseController(singleClient, player, moveMouseWithRobotInput)
+    val mouseController = MouseController(singleClient, player, moveMouseWithRobotInput)
     val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
         ImageIO.read(File("src/main/resources/example/cursor.png")),
         Point(0, 0),

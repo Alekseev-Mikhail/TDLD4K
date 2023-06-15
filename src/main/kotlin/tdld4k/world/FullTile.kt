@@ -3,7 +3,7 @@ package tdld4k.world
 import tdld4k.math.Vector2Double
 import java.awt.Paint
 
-class GameFullTile(override val paint: Paint) : GameShape {
+class FullTile(override val paint: Paint) : TileShape {
     override fun intersection(point: Vector2Double): Boolean {
         return true
     }

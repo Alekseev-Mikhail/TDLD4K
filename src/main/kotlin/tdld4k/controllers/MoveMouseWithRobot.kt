@@ -1,13 +1,13 @@
 package tdld4k.controllers
 
-import tdld4k.GameSingleClient
+import tdld4k.SingleClient
 import java.awt.Robot
 import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionListener
 
-abstract class GameMoveMouseWithRobot(
-    singleClient: GameSingleClient,
-    private var moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
+abstract class MoveMouseWithRobot(
+    singleClient: SingleClient,
+    private var moveMouseWithRobotInput: MoveMouseWithRobotInput,
 ) : MouseMotionListener {
     private val robot = Robot()
     private val playerFrame = singleClient.playerFrame

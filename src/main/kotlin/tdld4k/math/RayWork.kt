@@ -1,23 +1,23 @@
 package tdld4k.math
 
-import tdld4k.player.GamePlayer
-import tdld4k.world.GameWorld
+import tdld4k.player.Player
+import tdld4k.world.World
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-class GameRayWork(private val world: GameWorld, private val player: GamePlayer) {
-    fun rayCasting(angle: Double): GameRayCastingOutput {
+class GameRayWork(private val world: World, private val player: Player) {
+    fun rayCasting(angle: Double): RayCastingOutput {
         for (c in 0.0..player.renderDistance step player.quality) {
             val point = pointOfRay(c, angle)
             if (point.isWall) {
-                return GameRayCastingOutput(c, point.shape)
+                return RayCastingOutput(c, point.tileShape)
             }
         }
-        return GameRayCastingOutput(0.0, null)
+        return RayCastingOutput(0.0, null)
     }
 
-    fun pointOfRay(distance: Double, angle: Double): GamePointOfRayOutput {
+    fun pointOfRay(distance: Double, angle: Double): PointOfRayOutput {
         val tileSize = world.tileSize
 
         val xPointOfRay = player.x + distance * cos(angle)
@@ -29,12 +29,12 @@ class GameRayWork(private val world: GameWorld, private val player: GamePlayer) 
         val xMap = ((xPointOfRay - xDistanceToStart) / tileSize).roundToInt()
         val yMap = ((yPointOfRay - yDistanceToStart) / tileSize).roundToInt()
 
-        val shape = world[xMap, yMap]
-        if (shape != null) {
-            val isWall = shape.intersection(Vector2Double(xDistanceToStart, yDistanceToStart))
-            return GamePointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), shape, isWall)
+        val tileShape = world[xMap, yMap]
+        if (tileShape != null) {
+            val isWall = tileShape.intersection(Vector2Double(xDistanceToStart, yDistanceToStart))
+            return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), tileShape, isWall)
         }
-        return GamePointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), null, false)
+        return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), null, false)
     }
 }
 

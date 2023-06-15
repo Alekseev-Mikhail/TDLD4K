@@ -1,17 +1,17 @@
 package example
 
-import tdld4k.GameSingleClient
-import tdld4k.controllers.GameMoveMouseWithRobotInput
-import tdld4k.controllers.GameRotationControl
-import tdld4k.player.GamePlayer
+import tdld4k.SingleClient
+import tdld4k.controllers.MoveMouseWithRobotInput
+import tdld4k.controllers.RotationControl
+import tdld4k.player.Player
 import java.awt.Cursor
 import java.awt.MouseInfo
 
-class ExampleMouseController(
-    private var singleClient: GameSingleClient,
-    player: GamePlayer,
-    moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
-) : GameRotationControl(singleClient, player, moveMouseWithRobotInput) {
+class MouseController(
+    private var singleClient: SingleClient,
+    player: Player,
+    moveMouseWithRobotInput: MoveMouseWithRobotInput,
+) : RotationControl(singleClient, player, moveMouseWithRobotInput) {
     var firstCustomCursor: Cursor = Cursor.getDefaultCursor()
     var secondCustomCursor: Cursor = Cursor.getDefaultCursor()
 

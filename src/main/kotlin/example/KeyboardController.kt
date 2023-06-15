@@ -1,10 +1,10 @@
 package example
 
-import tdld4k.GameSingleClient
-import tdld4k.controllers.GameMoveMouseWithRobotInput
-import tdld4k.controllers.GameMovementControl
-import tdld4k.player.GamePlayer
-import tdld4k.world.GameWorld
+import tdld4k.SingleClient
+import tdld4k.controllers.MoveMouseWithRobotInput
+import tdld4k.controllers.MovementControl
+import tdld4k.player.Player
+import tdld4k.world.World
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_DOWN
 import java.awt.event.KeyEvent.VK_END
@@ -16,17 +16,17 @@ import java.awt.event.KeyEvent.VK_RIGHT
 import java.awt.event.KeyEvent.VK_UP
 import javax.swing.Timer
 
-class ExampleKeyboardController(
-    world: GameWorld,
+class KeyboardController(
+    world: World,
     forward: Int,
     back: Int,
     left: Int,
     right: Int,
-    private val singleClient: GameSingleClient,
-    private val player: GamePlayer,
+    private val singleClient: SingleClient,
+    private val player: Player,
     private var isFullscreen: Boolean,
-    private val moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
-) : GameMovementControl(
+    private val moveMouseWithRobotInput: MoveMouseWithRobotInput,
+) : MovementControl(
     world,
     player,
     forward,

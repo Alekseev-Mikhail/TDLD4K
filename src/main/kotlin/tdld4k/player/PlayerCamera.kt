@@ -1,11 +1,11 @@
 package tdld4k.player
 
-import tdld4k.math.GameRayCastingOutput
 import tdld4k.math.GameRayWork
 import tdld4k.math.Parallelogram
+import tdld4k.math.RayCastingOutput
 import tdld4k.math.Vector2Int
-import tdld4k.world.GameShape
-import tdld4k.world.GameWorld
+import tdld4k.world.TileShape
+import tdld4k.world.World
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Paint
@@ -13,7 +13,7 @@ import javax.swing.JPanel
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
-class GameCamera(private val world: GameWorld, private val player: GamePlayer) : JPanel() {
+class PlayerCamera(private val world: World, private val player: Player) : JPanel() {
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
         val translatedGamePlayer = player.translateToRadians()
@@ -25,14 +25,14 @@ class GameCamera(private val world: GameWorld, private val player: GamePlayer) :
         g2d.paint = prevPaint
     }
 
-    private fun drawWallsLikeParallelogram(g2d: Graphics2D, translatedGamePlayer: GameTranslatedToRadians) {
+    private fun drawWallsLikeParallelogram(g2d: Graphics2D, translatedGamePlayer: TranslatedToRadians) {
         val parallelograms = mutableListOf<Parallelogram>()
         val rayWork = GameRayWork(world, player)
         val direction = translatedGamePlayer.direction
         val fov = translatedGamePlayer.fov
 
-        var currentTile: GameShape? = null
-        var lastRc: GameRayCastingOutput? = null
+        var currentTile: TileShape? = null
+        var lastRc: RayCastingOutput? = null
         var lastAngle: Double? = null
         var currentLeftTop: Vector2Int? = null
         var currentLeftBot: Vector2Int? = null
@@ -40,7 +40,7 @@ class GameCamera(private val world: GameWorld, private val player: GamePlayer) :
             val angle = direction - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
 
-            val shape = rc.shape ?: continue
+            val shape = rc.tileShape ?: continue
             if (currentTile == null) {
                 val currentColumn = height / (rc.wallDistance * cos(angle - direction))
                 currentTile = shape
@@ -80,7 +80,7 @@ class GameCamera(private val world: GameWorld, private val player: GamePlayer) :
         }
     }
 
-    private fun drawWallsLikeColumns(g2d: Graphics2D, translatedGamePlayer: GameTranslatedToRadians) {
+    private fun drawWallsLikeColumns(g2d: Graphics2D, translatedGamePlayer: TranslatedToRadians) {
         val rayWork = GameRayWork(world, player)
         val direction = translatedGamePlayer.direction
         val fov = translatedGamePlayer.fov
@@ -88,9 +88,9 @@ class GameCamera(private val world: GameWorld, private val player: GamePlayer) :
         for (x in 0 until width) {
             val angle = direction - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
-            if (rc.shape != null) {
+            if (rc.tileShape != null) {
                 val currentColumn = height / (rc.wallDistance * cos(angle - direction))
-                drawColumn(g2d, rc.shape.paint, x, currentColumn)
+                drawColumn(g2d, rc.tileShape.paint, x, currentColumn)
             }
         }
     }

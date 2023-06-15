@@ -1,15 +1,15 @@
 package tdld4k.controllers
 
 import tdld4k.math.GameRayWork
-import tdld4k.player.GamePlayer
-import tdld4k.world.GameWorld
+import tdld4k.player.Player
+import tdld4k.world.World
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.Timer
 
-abstract class GameMovementControl(
-    world: GameWorld,
-    private val player: GamePlayer,
+abstract class MovementControl(
+    world: World,
+    private val player: Player,
     private val forward: Int,
     private val back: Int,
     private val left: Int,

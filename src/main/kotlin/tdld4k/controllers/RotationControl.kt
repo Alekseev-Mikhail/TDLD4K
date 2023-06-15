@@ -1,15 +1,15 @@
 package tdld4k.controllers
 
-import tdld4k.GameSingleClient
-import tdld4k.player.GamePlayer
+import tdld4k.SingleClient
+import tdld4k.player.Player
 import java.awt.MouseInfo
 import java.awt.event.MouseEvent
 
-abstract class GameRotationControl(
-    singleClient: GameSingleClient,
-    private val player: GamePlayer,
-    private val moveMouseWithRobotInput: GameMoveMouseWithRobotInput,
-) : GameMoveMouseWithRobot(singleClient, moveMouseWithRobotInput) {
+abstract class RotationControl(
+    singleClient: SingleClient,
+    private val player: Player,
+    private val moveMouseWithRobotInput: MoveMouseWithRobotInput,
+) : MoveMouseWithRobot(singleClient, moveMouseWithRobotInput) {
     private var lastX = MouseInfo.getPointerInfo().location.x
 
     override fun mouseMoved(e: MouseEvent) {

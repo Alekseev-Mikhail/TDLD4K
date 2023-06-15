@@ -3,7 +3,7 @@ package tdld4k.player
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.Delegates
 
-abstract class GamePlayer(
+abstract class Player(
     x: Double,
     y: Double,
     direction: Double,
@@ -29,7 +29,7 @@ abstract class GamePlayer(
         listeners.add(listener)
     }
 
-    fun translateToRadians(): GameTranslatedToRadians {
-        return GameTranslatedToRadians(Math.toRadians(direction), Math.toRadians(fov))
+    fun translateToRadians(): TranslatedToRadians {
+        return TranslatedToRadians(Math.toRadians(direction), Math.toRadians(fov))
     }
 }
