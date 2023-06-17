@@ -1,3 +1,2 @@
-
-rootProject.name = "ThreeDLikeDoom4Kotlin"
+rootProject.name = "TDLD4K"
 
