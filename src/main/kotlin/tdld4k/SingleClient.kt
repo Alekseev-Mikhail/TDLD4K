@@ -1,11 +1,13 @@
 package tdld4k
 
 import tdld4k.player.Player
-import tdld4k.player.PlayerCamera
+import tdld4k.player.camera.Camera
+import tdld4k.player.camera.CameraLayersInterface
 import tdld4k.world.World
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
+import java.awt.Image
 import java.awt.Point
 import java.awt.Toolkit
 import java.awt.event.KeyListener
@@ -16,11 +18,13 @@ import javax.swing.JFrame
 import javax.swing.JFrame.EXIT_ON_CLOSE
 
 class SingleClient(
-    private val player: Player,
     world: World,
+    cameraLayers: CameraLayersInterface,
+    private val player: Player,
+
 ) {
     var playerFrame: JFrame = JFrame()
-    private val playerCamera = PlayerCamera(world, player)
+    private val camera = Camera(world, player, cameraLayers)
     private var currentCursor = Cursor.getDefaultCursor()
     private val blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
         BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
@@ -29,11 +33,11 @@ class SingleClient(
     )
 
     companion object {
-        fun getImage(name: String) = ImageIcon(SingleClient::class.java.getResource(name)).image
+        fun getImage(name: String): Image = ImageIcon(SingleClient::class.java.getResource(name)).image
     }
 
     fun initializationFrame(keyboardController: KeyListener, mouseController: MouseMotionListener) {
-        playerFrame.contentPane = playerCamera.apply {
+        playerFrame.contentPane = camera.apply {
             player.addListener { repaint() }
         }
         playerFrame.addKeyListener(keyboardController)

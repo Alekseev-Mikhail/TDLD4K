@@ -59,7 +59,8 @@ fun main() {
         isFreezeMovement = false,
         isFreezeRotation = false,
     )
-    val singleClient = SingleClient(player, world)
+    val cameraLayers = CameraLayers()
+    val singleClient = SingleClient(world, cameraLayers, player)
     val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
     val keyboardController = KeyboardController(
         world,

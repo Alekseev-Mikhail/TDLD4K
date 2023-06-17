@@ -1,9 +1,11 @@
-package tdld4k.player
+package tdld4k.player.camera
 
 import tdld4k.math.GameRayWork
 import tdld4k.math.Parallelogram
 import tdld4k.math.RayCastingOutput
 import tdld4k.math.Vector2Int
+import tdld4k.player.Player
+import tdld4k.player.TranslatedToRadians
 import tdld4k.world.TileShape
 import tdld4k.world.World
 import java.awt.Graphics
@@ -13,14 +15,16 @@ import javax.swing.JPanel
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
-class PlayerCamera(private val world: World, private val player: Player) : JPanel() {
+class Camera(private val world: World, private val player: Player, private val cameraLayers: CameraLayersInterface) : JPanel() {
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
         val translatedGamePlayer = player.translateToRadians()
         val g2d = g as Graphics2D
         val prevPaint = g2d.paint
 
+        cameraLayers.bottom(g2d)
         drawWallsLikeColumns(g2d, translatedGamePlayer)
+        cameraLayers.top(g2d)
 
         g2d.paint = prevPaint
     }
