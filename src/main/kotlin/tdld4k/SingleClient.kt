@@ -1,7 +1,7 @@
 package tdld4k
 
-import tdld4k.player.PlayerCamera
 import tdld4k.player.Player
+import tdld4k.player.PlayerCamera
 import tdld4k.world.World
 import java.awt.Cursor
 import java.awt.Dimension
@@ -11,6 +11,7 @@ import java.awt.Toolkit
 import java.awt.event.KeyListener
 import java.awt.event.MouseMotionListener
 import java.awt.image.BufferedImage
+import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JFrame.EXIT_ON_CLOSE
 
@@ -26,6 +27,10 @@ class SingleClient(
         Point(0, 0),
         "blank cursor",
     )
+
+    companion object {
+        fun getImage(name: String) = ImageIcon(SingleClient::class.java.getResource(name)).image
+    }
 
     fun initializationFrame(keyboardController: KeyListener, mouseController: MouseMotionListener) {
         playerFrame.contentPane = playerCamera.apply {

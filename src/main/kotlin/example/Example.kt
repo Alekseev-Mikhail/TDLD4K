@@ -17,8 +17,6 @@ import java.awt.event.KeyEvent.VK_A
 import java.awt.event.KeyEvent.VK_D
 import java.awt.event.KeyEvent.VK_S
 import java.awt.event.KeyEvent.VK_W
-import java.io.File
-import javax.imageio.ImageIO
 
 fun main() {
     val map = "11111111111111111" +
@@ -76,12 +74,12 @@ fun main() {
     )
     val mouseController = MouseController(singleClient, player, moveMouseWithRobotInput)
     val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        ImageIO.read(File("src/main/resources/example/cursor.png")),
+        SingleClient.getImage("/example/cursor.png"),
         Point(0, 0),
         "first custom cursor",
     )
     val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        ImageIO.read(File("src/main/resources/example/cursor1.png")),
+        SingleClient.getImage("/example/cursor1.png"),
         Point(0, 0),
         "second custom cursor",
     )
@@ -95,7 +93,7 @@ fun main() {
 
     singleClient.setInvisibleCursor()
     singleClient.playerFrame.title = "Example"
-    singleClient.playerFrame.iconImage = ImageIO.read(File("src/main/resources/example/icon.jpg"))
+    singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
     singleClient.playerFrame.isVisible = true
     singleClient.changeFrameSize(512, 512)
 }
