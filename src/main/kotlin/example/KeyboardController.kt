@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent.VK_DOWN
 import java.awt.event.KeyEvent.VK_END
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_F11
+import java.awt.event.KeyEvent.VK_F3
 import java.awt.event.KeyEvent.VK_HOME
 import java.awt.event.KeyEvent.VK_LEFT
 import java.awt.event.KeyEvent.VK_RIGHT
@@ -63,6 +64,8 @@ class KeyboardController(
     override fun keyPressed(e: KeyEvent) {
         super.keyPressed(e)
         when (e.keyCode) {
+            VK_F3 -> player.isShowDebugMenu = player.isShowDebugMenu == false
+            
             VK_ESCAPE -> {
                 if (!isEscape) {
                     isEscape = true

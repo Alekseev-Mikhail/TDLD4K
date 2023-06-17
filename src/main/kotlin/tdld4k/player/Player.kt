@@ -10,6 +10,7 @@ abstract class Player(
     fov: Double,
     quality: Double,
     renderDistance: Double,
+    isShowDebugMenu: Boolean,
     val movementSpeed: Double,
     val rotationSpeed: Double,
     val maxFps: Int,
@@ -22,6 +23,7 @@ abstract class Player(
     var fov: Double by Delegates.observable(fov) { _, _, _ -> listeners.forEach { it.run() } }
     var quality: Double by Delegates.observable(quality) { _, _, _ -> listeners.forEach { it.run() } }
     var renderDistance: Double by Delegates.observable(renderDistance) { _, _, _ -> listeners.forEach { it.run() } }
+    var isShowDebugMenu: Boolean by Delegates.observable(isShowDebugMenu) { _, _, _ -> listeners.forEach { it.run() } }
 
     private val listeners = CopyOnWriteArrayList<Runnable>()
 

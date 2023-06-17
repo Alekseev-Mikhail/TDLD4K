@@ -6,11 +6,13 @@ import tdld4k.math.Vector2Double
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
+import java.awt.Color
 import java.awt.Color.BLUE
 import java.awt.Color.DARK_GRAY
 import java.awt.Color.GRAY
 import java.awt.Color.ORANGE
 import java.awt.Color.YELLOW
+import java.awt.Font.PLAIN
 import java.awt.Point
 import java.awt.Toolkit
 import java.awt.event.KeyEvent.VK_A
@@ -46,7 +48,7 @@ fun main() {
         Pair('4', AABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
     )
     val world = World(map, mapWidth, ' ', BLUE, tileTypes, tileSize)
-    val player = Player(
+    val player = ExamplePlayer(
         10.0,
         10.0,
         0.0,
@@ -58,8 +60,16 @@ fun main() {
         60,
         isFreezeMovement = false,
         isFreezeRotation = false,
+        isShowDebugMenu = false
     )
-    val cameraLayers = CameraLayers()
+    val cameraLayers = CameraLayers(
+        player,
+        Point(5, 5),
+        PLAIN,
+        5,
+        Color(82, 82, 82, 190),
+        Color(240, 240, 240, 220)
+    )
     val singleClient = SingleClient(world, cameraLayers, player)
     val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
     val keyboardController = KeyboardController(
@@ -97,4 +107,6 @@ fun main() {
     singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
     singleClient.playerFrame.isVisible = true
     singleClient.changeFrameSize(512, 512)
+    cameraLayers.addDebugObject(player)
+    player.addListener { player.updateDebugItems() }
 }
