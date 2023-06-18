@@ -18,6 +18,11 @@ abstract class RotationControl(
         if (!player.isFreezeRotation) {
             if (moveMouseWithRobotInput.isRobot) {
                 player.direction = player.direction - player.rotationSpeed * (lastX - e.x)
+                if (player.direction >= 360) {
+                    player.direction = 0.0
+                } else if (player.direction < 0) {
+                    player.direction = 360.0
+                }
             }
         } else {
             mouseMovedInFreeze()
