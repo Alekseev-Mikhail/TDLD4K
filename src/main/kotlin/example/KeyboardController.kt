@@ -53,11 +53,11 @@ class KeyboardController(
         }
     }
     private val qualityUp = Timer(1_000 / player.maxFps) {
-        player.quality = player.quality + 0.001
+        player.quality = player.quality * 1.01
     }
     private val qualityDown = Timer(1_000 / player.maxFps) {
         if (player.quality > 0.0) {
-            player.quality = player.quality - 0.001
+            player.quality = player.quality / 1.01
         }
     }
 
@@ -65,7 +65,7 @@ class KeyboardController(
         super.keyPressed(e)
         when (e.keyCode) {
             VK_F3 -> player.isShowDebugMenu = player.isShowDebugMenu == false
-            
+
             VK_ESCAPE -> {
                 if (!isEscape) {
                     isEscape = true

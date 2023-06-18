@@ -53,14 +53,14 @@ fun main() {
         10.0,
         0.0,
         70.0,
-        0.1,
+        10.0,
         400.0,
         6.0,
         0.4,
         60,
         isFreezeMovement = false,
         isFreezeRotation = false,
-        isShowDebugMenu = false
+        isShowDebugMenu = false,
     )
     val cameraLayers = CameraLayers(
         player,
@@ -68,7 +68,7 @@ fun main() {
         PLAIN,
         5,
         Color(82, 82, 82, 190),
-        Color(240, 240, 240, 220)
+        Color(240, 240, 240, 220),
     )
     val singleClient = SingleClient(world, cameraLayers, player)
     val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)

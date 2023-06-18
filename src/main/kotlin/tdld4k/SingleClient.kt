@@ -43,6 +43,7 @@ class SingleClient(
         playerFrame.addKeyListener(keyboardController)
         playerFrame.addMouseMotionListener(mouseController)
         playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
+        player.quality = 1 / player.quality
     }
 
     fun moveToScreenCenter() {
