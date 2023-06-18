@@ -2,6 +2,7 @@ package example
 
 import tdld4k.player.Player
 import tdld4k.player.camera.DebugObject
+import java.text.DecimalFormat
 
 class ExamplePlayer(
     x: Double,
@@ -29,20 +30,23 @@ class ExamplePlayer(
     maxFps,
     isFreezeMovement,
     isFreezeRotation,
-), DebugObject {
+),
+    DebugObject {
+    private val df = DecimalFormat("#.###")
+
     override val debugItems: MutableMap<String, Any> = mutableMapOf(
-        Pair("X", x),
-        Pair("Y", y),
-        Pair("Direction", direction),
-        Pair("FOV", fov),
-        Pair("Quality", quality),
+        Pair("X", df.format(x)),
+        Pair("Y", df.format(y)),
+        Pair("Direction", df.format(direction)),
+        Pair("FOV", df.format(fov)),
+        Pair("Quality", df.format(quality)),
     )
 
     override fun updateDebugItems() {
-        debugItems["X"] = x
-        debugItems["Y"] = y
-        debugItems["Direction"] = direction
-        debugItems["FOV"] = fov
-        debugItems["Quality"] = quality
+        debugItems["X"] = df.format(x)
+        debugItems["Y"] = df.format(y)
+        debugItems["Direction"] = df.format(direction)
+        debugItems["FOV"] = df.format(fov)
+        debugItems["Quality"] = df.format(quality)
     }
 }
