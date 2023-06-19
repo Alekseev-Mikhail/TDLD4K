@@ -32,21 +32,24 @@ class ExamplePlayer(
     isFreezeRotation,
 ),
     DebugObject {
-    private val df = DecimalFormat("#.###")
+    private val decForCoordinates = DecimalFormat("0.000")
+    private val decForDirection = DecimalFormat("000.000")
+    private val decForFov = DecimalFormat("0")
+    private val decForQuality = DecimalFormat("0.00000")
 
-    override val debugItems: MutableMap<String, Any> = mutableMapOf(
-        Pair("X", df.format(x)),
-        Pair("Y", df.format(y)),
-        Pair("Direction", df.format(direction)),
-        Pair("FOV", df.format(fov)),
-        Pair("Quality", df.format(quality)),
+    override val debugItems: MutableMap<String, String> = mutableMapOf(
+        Pair("X", decForCoordinates.format(x)),
+        Pair("Y", decForCoordinates.format(y)),
+        Pair("Direction", decForDirection.format(direction)),
+        Pair("FOV", decForFov.format(fov)),
+        Pair("Quality", decForQuality.format(quality)),
     )
 
     override fun updateDebugItems() {
-        debugItems["X"] = df.format(x)
-        debugItems["Y"] = df.format(y)
-        debugItems["Direction"] = df.format(direction)
-        debugItems["FOV"] = df.format(fov)
-        debugItems["Quality"] = df.format(quality)
+        debugItems["X"] = decForCoordinates.format(x)
+        debugItems["Y"] = decForCoordinates.format(y)
+        debugItems["Direction"] = decForDirection.format(direction)
+        debugItems["FOV"] = decForFov.format(fov)
+        debugItems["Quality"] = decForQuality.format(quality)
     }
 }
