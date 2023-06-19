@@ -47,7 +47,7 @@ fun main() {
         Pair('3', AABBTile(YELLOW, Vector2Double(1.0, 1.0), Vector2Double(4.0, 4.0))),
         Pair('4', AABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
     )
-    val world = World(map, mapWidth, ' ', BLUE, tileTypes, tileSize)
+    val world = World(map, mapWidth, tileSize, ' ', FullTile(BLUE), tileTypes)
     val player = ExamplePlayer(
         10.0,
         10.0,

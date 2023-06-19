@@ -1,16 +1,14 @@
 package tdld4k.world
 
-import java.awt.Paint
-
 class World(
     map: String,
-    mapWidth: Int,
-    private val airCode: Char,
-    private val errorColor: Paint,
-    private val tileTypes: Map<Char, TileShape>,
+    val mapWidth: Int,
     val tileSize: Int,
+    private val airCode: Char,
+    private val errorTile: TileShape,
+    private val tileTypes: Map<Char, TileShape>,
 ) {
-    private val map = map.map { fromCode(it) }.chunked(mapWidth)
+    val map = map.map { fromCode(it) }.chunked(mapWidth)
 
     operator fun get(x: Int, y: Int): TileShape? = map[y][x]
 
@@ -21,6 +19,6 @@ class World(
         if (code == airCode) {
             return null
         }
-        return FullTile(errorColor)
+        return errorTile
     }
 }

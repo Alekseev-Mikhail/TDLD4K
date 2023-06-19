@@ -29,6 +29,12 @@ class GameRayWork(private val world: World, private val player: Player) {
         val xMap = ((xPointOfRay - xDistanceToStart) / tileSize).roundToInt()
         val yMap = ((yPointOfRay - yDistanceToStart) / tileSize).roundToInt()
 
+        val edgeX = world.mapWidth - 1
+        val edgeY = world.map.size - 1
+        if (xMap < 0 || yMap < 0 || xMap > edgeX || yMap > edgeY) {
+            return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), null, true)
+        }
+
         val tileShape = world[xMap, yMap]
         if (tileShape != null) {
             val isWall = tileShape.intersection(Vector2Double(xDistanceToStart, yDistanceToStart))
