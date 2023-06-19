@@ -65,6 +65,7 @@ fun main() {
     val cameraLayers = CameraLayers(
         player,
         Point(5, 5),
+        25,
         PLAIN,
         5,
         Color(82, 82, 82, 190),
