@@ -1,4 +1,4 @@
-package tdld4k.player.camera
+package tdld4k.debug
 
 interface DebugObject {
     val debugItems: MutableMap<String, Any>

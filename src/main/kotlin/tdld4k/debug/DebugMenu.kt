@@ -1,5 +1,6 @@
-package tdld4k.player.camera
+package tdld4k.debug
 
+import tdld4k.player.camera.CameraLayersAdapter
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.Paint

@@ -1,6 +1,6 @@
 package example
 
-import tdld4k.player.camera.DebugMenu
+import tdld4k.debug.DebugMenu
 import java.awt.Graphics2D
 import java.awt.Paint
 import java.awt.Point
@@ -11,13 +11,13 @@ class CameraLayers(
     fontValue: Int,
     margin: Int,
     labelPaint: Paint,
-    textPaint: Paint
+    textPaint: Paint,
 ) : DebugMenu(
     point,
     fontValue,
     margin,
     labelPaint,
-    textPaint
+    textPaint,
 ) {
     override fun top(g2d: Graphics2D) {
         if (player.isShowDebugMenu) {

@@ -1,7 +1,7 @@
 package example
 
+import tdld4k.debug.DebugObject
 import tdld4k.player.Player
-import tdld4k.player.camera.DebugObject
 import java.text.DecimalFormat
 
 class ExamplePlayer(
