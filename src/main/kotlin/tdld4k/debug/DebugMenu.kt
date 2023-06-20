@@ -27,6 +27,9 @@ abstract class DebugMenu(
     }
 
     override fun top(g2d: Graphics2D) {
+        debugObjects.forEach { e ->
+            e?.updateDebugItems()
+        }
         debugObjects.forEach { o ->
             o?.debugItems?.forEach { i ->
                 if (i.key == "Pass" && i.value == null) {
