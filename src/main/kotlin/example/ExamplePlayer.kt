@@ -1,6 +1,6 @@
 package example
 
-import tdld4k.debug.DebugObject
+import tdld4k.debug.DebugObjectInterface
 import tdld4k.player.Player
 import java.text.DecimalFormat
 
@@ -31,7 +31,7 @@ class ExamplePlayer(
     isFreezeMovement,
     isFreezeRotation,
 ),
-    DebugObject {
+    DebugObjectInterface {
     private val decForCoordinates = DecimalFormat("0.000")
     private val decForDirection = DecimalFormat("000.000")
     private val decForFov = DecimalFormat("0")

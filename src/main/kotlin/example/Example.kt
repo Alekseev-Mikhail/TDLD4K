@@ -2,6 +2,7 @@ package example
 
 import tdld4k.SingleClient
 import tdld4k.controllers.MoveMouseWithRobotInput
+import tdld4k.debug.DebugObject
 import tdld4k.math.Vector2Double
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
@@ -109,6 +110,7 @@ fun main() {
     singleClient.playerFrame.isVisible = true
     singleClient.changeFrameSize(512, 512)
 
+    cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", singleClient.version))))
     cameraLayers.addDebugObject(player)
     singleClient.startFpsCounter()
 }

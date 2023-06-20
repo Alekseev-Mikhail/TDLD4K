@@ -16,13 +16,13 @@ abstract class DebugMenu(
     private val labelPaint: Paint,
     private val textPaint: Paint,
 ) : CameraLayersAdapter() {
-    private val debugObjects = mutableListOf<DebugObject?>()
+    private val debugObjects = mutableListOf<DebugObjectInterface?>()
     private val font = Font("debug menu", fontValue, fontSize)
     private val xLabel = point.x
     private var yLabel = point.y
     private val heightLabel = font.size + margin * 2
 
-    fun addDebugObject(debugObject: DebugObject?) {
+    fun addDebugObject(debugObject: DebugObjectInterface?) {
         debugObjects.add(debugObject)
     }
 

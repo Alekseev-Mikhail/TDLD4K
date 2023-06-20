@@ -23,6 +23,7 @@ class SingleClient(
     private val player: Player,
 
 ) {
+    val version: String = this::class.java.`package`.implementationVersion
     var playerFrame: JFrame = JFrame()
     private val camera = Camera(world, player, cameraLayers)
     private var currentCursor = Cursor.getDefaultCursor()
