@@ -18,27 +18,27 @@ abstract class MovementControl(
     private val rayWork = GameRayWork(world, player)
 
     val moveToForward = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed / player.maxFps, Math.toRadians(player.direction))
+        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.direction))
         player.x = point.vector.x
-        player.y = point.vector.y
+        player.z = point.vector.y
     }
 
     val moveToBack = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed / player.maxFps, Math.toRadians(player.direction + 180))
+        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.direction + 180))
         player.x = point.vector.x
-        player.y = point.vector.y
+        player.z = point.vector.y
     }
 
     val moveToLeft = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed / player.maxFps, Math.toRadians(player.direction - 90))
+        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.direction - 90))
         player.x = point.vector.x
-        player.y = point.vector.y
+        player.z = point.vector.y
     }
 
     val moveToRight = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed / player.maxFps, Math.toRadians(player.direction + 90))
+        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.direction + 90))
         player.x = point.vector.x
-        player.y = point.vector.y
+        player.z = point.vector.y
     }
 
     override fun keyPressed(e: KeyEvent) {

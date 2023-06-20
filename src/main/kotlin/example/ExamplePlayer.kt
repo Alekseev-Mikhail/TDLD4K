@@ -7,6 +7,7 @@ import java.text.DecimalFormat
 class ExamplePlayer(
     x: Double,
     y: Double,
+    z: Double,
     direction: Double,
     fov: Double,
     quality: Double,
@@ -20,6 +21,7 @@ class ExamplePlayer(
 ) : Player(
     x,
     y,
+    z,
     direction,
     fov,
     quality,
@@ -39,7 +41,7 @@ class ExamplePlayer(
 
     override val debugItems: MutableMap<String?, String?> = mutableMapOf(
         Pair("FPS", fps.toString()),
-        Pair("X Y", "${decForCoordinates.format(x)} ${decForCoordinates.format(y)}"),
+        Pair("X Y Z", "${decForCoordinates.format(x)}  ${decForCoordinates.format(y)}  ${decForCoordinates.format(z)}"),
         Pair("Pass", null),
         Pair("Direction", decForDirection.format(direction)),
         Pair("FOV", decForFov.format(fov)),
@@ -48,7 +50,7 @@ class ExamplePlayer(
 
     override fun updateDebugItems() {
         debugItems["FPS"] = fps.toString()
-        debugItems["X Y"] = "${decForCoordinates.format(x)} ${decForCoordinates.format(y)}"
+        debugItems["X Y Z"] = "${decForCoordinates.format(x)}  ${decForCoordinates.format(y)}  ${decForCoordinates.format(z)}"
         debugItems["Direction"] = decForDirection.format(direction)
         debugItems["FOV"] = decForFov.format(fov)
         debugItems["Quality"] = decForQuality.format(quality)

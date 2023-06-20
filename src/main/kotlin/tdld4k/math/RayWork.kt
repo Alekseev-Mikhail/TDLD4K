@@ -21,26 +21,26 @@ class GameRayWork(private val world: World, private val player: Player) {
         val tileSize = world.tileSize
 
         val xPointOfRay = player.x + distance * cos(angle)
-        val yPointOfRay = player.y + distance * sin(angle)
+        val zPointOfRay = player.z + distance * sin(angle)
 
         val xDistanceToStart = xPointOfRay % tileSize
-        val yDistanceToStart = yPointOfRay % tileSize
+        val zDistanceToStart = zPointOfRay % tileSize
 
         val xMap = ((xPointOfRay - xDistanceToStart) / tileSize).roundToInt()
-        val yMap = ((yPointOfRay - yDistanceToStart) / tileSize).roundToInt()
+        val zMap = ((zPointOfRay - zDistanceToStart) / tileSize).roundToInt()
 
         val edgeX = world.mapWidth - 1
         val edgeY = world.map.size - 1
-        if (xMap < 0 || yMap < 0 || xMap > edgeX || yMap > edgeY) {
-            return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), null, true)
+        if (xMap < 0 || zMap < 0 || xMap > edgeX || zMap > edgeY) {
+            return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), null, true)
         }
 
-        val tileShape = world[xMap, yMap]
+        val tileShape = world[xMap, zMap]
         if (tileShape != null) {
-            val isWall = tileShape.intersection(Vector2Double(xDistanceToStart, yDistanceToStart))
-            return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), tileShape, isWall)
+            val isWall = tileShape.intersection(Vector2Double(xDistanceToStart, zDistanceToStart))
+            return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), tileShape, isWall)
         }
-        return PointOfRayOutput(Vector2Double(xPointOfRay, yPointOfRay), null, false)
+        return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), null, false)
     }
 }
 

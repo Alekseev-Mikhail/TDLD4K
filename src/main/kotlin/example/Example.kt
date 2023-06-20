@@ -4,6 +4,7 @@ import tdld4k.SingleClient
 import tdld4k.controllers.MoveMouseWithRobotInput
 import tdld4k.debug.DebugObject
 import tdld4k.math.Vector2Double
+import tdld4k.player.PlayerHeightLimits.MAX_HEIGHT
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
@@ -51,12 +52,13 @@ fun main() {
     val world = World(map, mapWidth, tileSize, ' ', FullTile(BLUE), tileTypes)
     val player = ExamplePlayer(
         10.0,
+        MAX_HEIGHT.value,
         10.0,
         0.0,
         70.0,
         10.0,
         400.0,
-        6.0,
+        0.1,
         0.4,
         60,
         isFreezeMovement = false,

@@ -6,6 +6,7 @@ import kotlin.properties.Delegates
 abstract class Player(
     x: Double,
     y: Double,
+    z: Double,
     direction: Double,
     fov: Double,
     quality: Double,
@@ -19,6 +20,7 @@ abstract class Player(
 ) {
     var x: Double by Delegates.observable(x) { _, _, _ -> listeners.forEach { it.run() } }
     var y: Double by Delegates.observable(y) { _, _, _ -> listeners.forEach { it.run() } }
+    var z: Double by Delegates.observable(z) { _, _, _ -> listeners.forEach { it.run() } }
     var direction: Double by Delegates.observable(direction) { _, _, _ -> listeners.forEach { it.run() } }
     var fov: Double by Delegates.observable(fov) { _, _, _ -> listeners.forEach { it.run() } }
     var quality: Double by Delegates.observable(quality) { _, _, _ -> listeners.forEach { it.run() } }

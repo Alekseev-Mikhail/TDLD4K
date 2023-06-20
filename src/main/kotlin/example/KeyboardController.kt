@@ -44,13 +44,11 @@ class KeyboardController(
             player.fov--
         }
     }
-    private val renderDistanceUp = Timer(1_000 / player.maxFps) {
-        player.renderDistance = player.renderDistance + 0.1
+    private val yUp = Timer(1_000 / player.maxFps) {
+        player.y = player.y + 0.01
     }
-    private val renderDistanceDown = Timer(1_000 / player.maxFps) {
-        if (player.renderDistance > 0.0) {
-            player.renderDistance = player.renderDistance - 0.1
-        }
+    private val yDown = Timer(1_000 / player.maxFps) {
+        player.y = player.y - 0.01
     }
     private val qualityUp = Timer(1_000 / player.maxFps) {
         player.quality = player.quality * 1.01
@@ -109,11 +107,11 @@ class KeyboardController(
             }
 
             VK_UP -> {
-                renderDistanceUp.start()
+                yUp.start()
             }
 
             VK_DOWN -> {
-                renderDistanceDown.start()
+                yDown.start()
             }
 
             VK_HOME -> {
@@ -138,11 +136,11 @@ class KeyboardController(
             }
 
             VK_UP -> {
-                renderDistanceUp.stop()
+                yUp.stop()
             }
 
             VK_DOWN -> {
-                renderDistanceDown.stop()
+                yDown.stop()
             }
 
             VK_HOME -> {
