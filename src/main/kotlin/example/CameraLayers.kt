@@ -7,16 +7,16 @@ import java.awt.Point
 
 class CameraLayers(
     private val player: ExamplePlayer,
-    point: Point,
     fontSize: Int,
     fontValue: Int,
+    point: Point,
     margin: Int,
     labelPaint: Paint,
     textPaint: Paint,
 ) : DebugMenu(
-    point,
     fontSize,
     fontValue,
+    point,
     margin,
     labelPaint,
     textPaint,

@@ -37,9 +37,10 @@ class ExamplePlayer(
     private val decForFov = DecimalFormat("0")
     private val decForQuality = DecimalFormat("0.00000")
 
-    override val debugItems: MutableMap<String, String> = mutableMapOf(
+    override val debugItems: MutableMap<String?, String?> = mutableMapOf(
         Pair("X", decForCoordinates.format(x)),
         Pair("Y", decForCoordinates.format(y)),
+        Pair("Pass", null),
         Pair("Direction", decForDirection.format(direction)),
         Pair("FOV", decForFov.format(fov)),
         Pair("Quality", decForQuality.format(quality)),

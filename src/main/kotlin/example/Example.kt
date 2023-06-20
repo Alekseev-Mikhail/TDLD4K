@@ -64,9 +64,9 @@ fun main() {
     )
     val cameraLayers = CameraLayers(
         player,
-        Point(5, 5),
         25,
         PLAIN,
+        Point(5, 5),
         5,
         Color(82, 82, 82, 190),
         Color(240, 240, 240, 220),
@@ -108,6 +108,7 @@ fun main() {
     singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
     singleClient.playerFrame.isVisible = true
     singleClient.changeFrameSize(512, 512)
+
     cameraLayers.addDebugObject(player)
     player.addListener { player.updateDebugItems() }
 }
