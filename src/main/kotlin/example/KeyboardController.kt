@@ -73,6 +73,7 @@ class KeyboardController(
                     player.isFreezeMovement = true
                     moveMouseWithRobotInput.isFreezeMove = true
                     singleClient.setVisibleCursor()
+                    singleClient.stopFpsCounter()
                     moveToForward.stop()
                     moveToBack.stop()
                     moveToLeft.stop()
@@ -83,6 +84,7 @@ class KeyboardController(
                     player.isFreezeMovement = false
                     moveMouseWithRobotInput.isFreezeMove = false
                     singleClient.setInvisibleCursor()
+                    singleClient.startFpsCounter()
                 }
             }
 

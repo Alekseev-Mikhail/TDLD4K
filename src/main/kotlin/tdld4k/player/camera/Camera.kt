@@ -12,10 +12,21 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Paint
 import javax.swing.JPanel
+import javax.swing.Timer
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
-class Camera(private val world: World, private val player: Player, private val cameraLayers: CameraLayersInterface) : JPanel() {
+class Camera(
+    private val world: World,
+    private val player: Player,
+    private val cameraLayers: CameraLayersInterface,
+) : JPanel() {
+    private var fps = 0
+    val fpsCounter = Timer(1_000) {
+        player.fps = fps
+        fps = 0
+    }
+
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
         val translatedGamePlayer = player.translateToRadians()
@@ -25,6 +36,7 @@ class Camera(private val world: World, private val player: Player, private val c
         cameraLayers.bottom(g2d)
         drawWallsLikeColumns(g2d, translatedGamePlayer)
         cameraLayers.top(g2d)
+        fps++
 
         g2d.paint = prevPaint
     }

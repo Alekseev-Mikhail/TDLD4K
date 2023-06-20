@@ -110,4 +110,5 @@ fun main() {
     singleClient.changeFrameSize(512, 512)
 
     cameraLayers.addDebugObject(player)
+    singleClient.startFpsCounter()
 }

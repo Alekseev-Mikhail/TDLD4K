@@ -84,4 +84,12 @@ class SingleClient(
     fun setVisibleCursor() {
         playerFrame.contentPane.cursor = currentCursor
     }
+
+    fun startFpsCounter() {
+        camera.fpsCounter.start()
+    }
+
+    fun stopFpsCounter() {
+        camera.fpsCounter.stop()
+    }
 }

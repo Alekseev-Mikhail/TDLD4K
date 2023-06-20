@@ -38,6 +38,7 @@ class ExamplePlayer(
     private val decForQuality = DecimalFormat("0.00000")
 
     override val debugItems: MutableMap<String?, String?> = mutableMapOf(
+        Pair("FPS", fps.toString()),
         Pair("X Y", "${decForCoordinates.format(x)} ${decForCoordinates.format(y)}"),
         Pair("Pass", null),
         Pair("Direction", decForDirection.format(direction)),
@@ -46,6 +47,7 @@ class ExamplePlayer(
     )
 
     override fun updateDebugItems() {
+        debugItems["FPS"] = fps.toString()
         debugItems["X Y"] = "${decForCoordinates.format(x)} ${decForCoordinates.format(y)}"
         debugItems["Direction"] = decForDirection.format(direction)
         debugItems["FOV"] = decForFov.format(fov)
