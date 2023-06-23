@@ -112,7 +112,7 @@ class Camera(
     }
 
     private fun drawColumn(g2d: Graphics2D, paint: Paint, x: Int, currentColumn: Double) {
-        val halfHeight = height / 2
+        val halfHeight = height / 2 * player.directionY
         val topColumn = currentColumn * (1 - player.y)
         val bottomColumn = currentColumn * player.y
         g2d.paint = paint

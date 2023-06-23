@@ -8,6 +8,7 @@ abstract class Player(
     y: Double,
     z: Double,
     direction: Double,
+    directionY: Double,
     fov: Double,
     quality: Double,
     renderDistance: Double,
@@ -22,6 +23,7 @@ abstract class Player(
     var y: Double by Delegates.observable(y) { _, _, _ -> listeners.forEach { it.run() } }
     var z: Double by Delegates.observable(z) { _, _, _ -> listeners.forEach { it.run() } }
     var direction: Double by Delegates.observable(direction) { _, _, _ -> listeners.forEach { it.run() } }
+    var directionY: Double by Delegates.observable(directionY) { _, _, _ -> listeners.forEach { it.run() } }
     var fov: Double by Delegates.observable(fov) { _, _, _ -> listeners.forEach { it.run() } }
     var quality: Double by Delegates.observable(quality) { _, _, _ -> listeners.forEach { it.run() } }
     var renderDistance: Double by Delegates.observable(renderDistance) { _, _, _ -> listeners.forEach { it.run() } }

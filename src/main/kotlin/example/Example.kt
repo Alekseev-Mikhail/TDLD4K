@@ -42,7 +42,6 @@ fun main() {
         "11111111111111111"
     val mapWidth = 17
     val tileSize = 5
-
     val tileTypes = mapOf(
         Pair('1', FullTile(GRAY)),
         Pair('2', FullTile(DARK_GRAY)),
@@ -55,6 +54,7 @@ fun main() {
         MAX_HEIGHT.value,
         10.0,
         0.0,
+        1.0,
         70.0,
         10.0,
         400.0,

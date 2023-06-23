@@ -21,7 +21,6 @@ class SingleClient(
     world: World,
     cameraLayers: CameraLayersInterface,
     private val player: Player,
-
 ) {
     val version: String? = this::class.java.`package`.implementationVersion
     var playerFrame: JFrame = JFrame()

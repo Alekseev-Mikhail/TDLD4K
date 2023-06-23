@@ -11,6 +11,7 @@ abstract class RotationControl(
     private val moveMouseWithRobotInput: MoveMouseWithRobotInput,
 ) : MoveMouseWithRobot(singleClient, moveMouseWithRobotInput) {
     private var lastX = MouseInfo.getPointerInfo().location.x
+    private var lastY = MouseInfo.getPointerInfo().location.y
 
     override fun mouseMoved(e: MouseEvent) {
         super.mouseMoved(e)
@@ -18,6 +19,7 @@ abstract class RotationControl(
         if (!player.isFreezeRotation) {
             if (moveMouseWithRobotInput.isRobot) {
                 player.direction = player.direction - player.rotationSpeed * (lastX - e.x)
+                player.directionY = player.directionY - 0.01 * (e.y - lastY)
                 if (player.direction >= 360) {
                     player.direction = 0.0
                 } else if (player.direction < 0) {
@@ -28,6 +30,7 @@ abstract class RotationControl(
             mouseMovedInFreeze()
         }
         lastX = e.x
+        lastY = e.y
     }
 
     abstract fun mouseMovedInFreeze()
