@@ -44,7 +44,7 @@ class Camera(
     private fun drawWallsLikeParallelogram(g2d: Graphics2D, translatedGamePlayer: TranslatedToRadians) {
         val parallelograms = mutableListOf<Parallelogram>()
         val rayWork = GameRayWork(world, player)
-        val direction = translatedGamePlayer.direction
+        val xDirection = translatedGamePlayer.xDirection
         val fov = translatedGamePlayer.fov
 
         var currentTile: TileShape? = null
@@ -53,12 +53,12 @@ class Camera(
         var currentLeftTop: Vector2Int? = null
         var currentLeftBot: Vector2Int? = null
         for (x in 0 until width) {
-            val angle = direction - fov / 2 + fov * x / width
+            val angle = xDirection - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
 
             val shape = rc.tileShape ?: continue
             if (currentTile == null) {
-                val currentColumn = height / (rc.wallDistance * cos(angle - direction))
+                val currentColumn = height / (rc.wallDistance * cos(angle - xDirection))
                 currentTile = shape
                 lastRc = rc
                 lastAngle = angle
@@ -71,7 +71,7 @@ class Camera(
                 lastAngle = angle
                 continue
             }
-            val lastColumn = height / (lastRc!!.wallDistance * cos(lastAngle!! - direction))
+            val lastColumn = height / (lastRc!!.wallDistance * cos(lastAngle!! - xDirection))
             currentTile = shape
             parallelograms.add(
                 Parallelogram(
@@ -98,21 +98,21 @@ class Camera(
 
     private fun drawWallsLikeColumns(g2d: Graphics2D, translatedGamePlayer: TranslatedToRadians) {
         val rayWork = GameRayWork(world, player)
-        val direction = translatedGamePlayer.direction
+        val xDirection = translatedGamePlayer.xDirection
         val fov = translatedGamePlayer.fov
 
         for (x in 0 until width) {
-            val angle = direction - fov / 2 + fov * x / width
+            val angle = xDirection - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
             if (rc.tileShape != null) {
-                val currentColumn = height / (rc.wallDistance * cos(angle - direction))
+                val currentColumn = height / (rc.wallDistance * cos(angle - xDirection))
                 drawColumn(g2d, rc.tileShape.paint, x, currentColumn)
             }
         }
     }
 
     private fun drawColumn(g2d: Graphics2D, paint: Paint, x: Int, currentColumn: Double) {
-        val halfHeight = height / 2 * player.directionY
+        val halfHeight = height / 2 * player.yDirection
         val topColumn = currentColumn * (1 - player.y)
         val bottomColumn = currentColumn * player.y
         g2d.paint = paint

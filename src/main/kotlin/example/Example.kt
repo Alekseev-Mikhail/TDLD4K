@@ -57,10 +57,11 @@ fun main() {
         0.0,
         1.0,
         70.0,
-        10.0,
+        7.0,
         400.0,
+        0.05,
         0.1,
-        0.4,
+        0.001,
         60,
         isFreezeMovement = false,
         isFreezeRotation = false,
@@ -85,7 +86,6 @@ fun main() {
         singleClient,
         player,
         cameraLayers,
-        true,
         moveMouseWithRobotInput,
     )
     val mouseController = MouseController(singleClient, player, moveMouseWithRobotInput)

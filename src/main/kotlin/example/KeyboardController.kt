@@ -25,7 +25,6 @@ class KeyboardController(
     private val singleClient: SingleClient,
     private val player: ExamplePlayer,
     private val cameraLayers: Menus,
-    private var isFullscreen: Boolean,
     private val moveMouseWithRobotInput: MoveMouseWithRobotInput,
 ) : MovementControl(
     world,
@@ -122,13 +121,13 @@ class KeyboardController(
     }
 
     private fun fullscreen() {
-        if (isFullscreen) {
-            isFullscreen = false
+        if (player.isFullscreen) {
+            player.isFullscreen = false
             singleClient.setWindowedMode()
             singleClient.playerFrame.pack()
             singleClient.moveToScreenCenter()
         } else {
-            isFullscreen = true
+            player.isFullscreen = true
             singleClient.setFullscreenMode()
         }
     }
