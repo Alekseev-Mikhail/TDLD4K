@@ -3,6 +3,8 @@ package example
 import tdld4k.debug.DebugObjectInterface
 import tdld4k.player.Player
 import java.text.DecimalFormat
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.properties.Delegates
 
 class ExamplePlayer(
     x: Double,
@@ -18,7 +20,6 @@ class ExamplePlayer(
     maxFps: Int,
     isFreezeMovement: Boolean,
     isFreezeRotation: Boolean,
-    isShowDebugMenu: Boolean,
 ) : Player(
     x,
     y,
@@ -28,7 +29,6 @@ class ExamplePlayer(
     fov,
     quality,
     renderDistance,
-    isShowDebugMenu,
     movementSpeed,
     rotationSpeed,
     maxFps,
@@ -36,6 +36,9 @@ class ExamplePlayer(
     isFreezeRotation,
 ),
     DebugObjectInterface {
+    var isEscape: Boolean by Delegates.observable(false) { _, _, _ -> listeners.forEach { it.run() } }
+    var isShowDebugMenu: Boolean by Delegates.observable(false) { _, _, _ -> listeners.forEach { it.run() } }
+
     private val decForCoordinates = DecimalFormat("0.000")
     private val decForDirection = DecimalFormat("000.000")
     private val decForFov = DecimalFormat("0")
@@ -52,9 +55,16 @@ class ExamplePlayer(
 
     override fun updateDebugItems() {
         debugItems["FPS"] = fps.toString()
-        debugItems["X Y Z"] = "${decForCoordinates.format(x)}  ${decForCoordinates.format(y)}  ${decForCoordinates.format(z)}"
+        debugItems["X Y Z"] =
+            "${decForCoordinates.format(x)}  ${decForCoordinates.format(y)}  ${decForCoordinates.format(z)}"
         debugItems["Direction"] = decForDirection.format(direction)
         debugItems["FOV"] = decForFov.format(fov)
         debugItems["Quality"] = decForQuality.format(quality)
+    }
+
+    private val listeners = CopyOnWriteArrayList<Runnable>()
+
+    fun addListenerForTechOptions(listener: Runnable) {
+        listeners.add(listener)
     }
 }

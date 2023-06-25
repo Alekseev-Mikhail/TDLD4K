@@ -19,8 +19,8 @@ import kotlin.math.roundToInt
 class Camera(
     private val world: World,
     private val player: Player,
-    private val cameraLayers: CameraLayersInterface,
 ) : JPanel() {
+    private var cameraLayers: CameraLayers = CameraLayersAdapter()
     private var fps = 0
     val fpsCounter = Timer(1_000) {
         player.fps = fps
@@ -122,5 +122,13 @@ class Camera(
             x,
             (halfHeight + bottomColumn).roundToInt(),
         )
+    }
+
+    fun addComponents() {
+        cameraLayers.addComponents(this)
+    }
+
+    fun setCameraLayers(cameraLayers: CameraLayers) {
+        this.cameraLayers = cameraLayers
     }
 }

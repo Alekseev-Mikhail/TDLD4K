@@ -2,7 +2,7 @@ package tdld4k
 
 import tdld4k.player.Player
 import tdld4k.player.camera.Camera
-import tdld4k.player.camera.CameraLayersInterface
+import tdld4k.player.camera.CameraLayers
 import tdld4k.world.World
 import java.awt.Cursor
 import java.awt.Dimension
@@ -19,12 +19,11 @@ import javax.swing.JFrame.EXIT_ON_CLOSE
 
 class SingleClient(
     world: World,
-    cameraLayers: CameraLayersInterface,
     private val player: Player,
 ) {
     val version: String? = this::class.java.`package`.implementationVersion
     var playerFrame: JFrame = JFrame()
-    private val camera = Camera(world, player, cameraLayers)
+    private val camera = Camera(world, player)
     private var currentCursor = Cursor.getDefaultCursor()
     private val blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
         BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
@@ -91,5 +90,13 @@ class SingleClient(
 
     fun stopFpsCounter() {
         camera.fpsCounter.stop()
+    }
+
+    fun addComponents() {
+        camera.addComponents()
+    }
+
+    fun setCameraLayers(cameraLayers: CameraLayers) {
+        camera.setCameraLayers(cameraLayers)
     }
 }

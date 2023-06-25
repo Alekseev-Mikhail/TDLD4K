@@ -3,7 +3,6 @@ package example
 import tdld4k.SingleClient
 import tdld4k.controllers.MoveMouseWithRobotInput
 import tdld4k.controllers.MovementControl
-import tdld4k.player.Player
 import tdld4k.world.World
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_DOWN
@@ -24,7 +23,8 @@ class KeyboardController(
     left: Int,
     right: Int,
     private val singleClient: SingleClient,
-    private val player: Player,
+    private val player: ExamplePlayer,
+    private val cameraLayers: Menus,
     private var isFullscreen: Boolean,
     private val moveMouseWithRobotInput: MoveMouseWithRobotInput,
 ) : MovementControl(
@@ -35,7 +35,6 @@ class KeyboardController(
     left,
     right,
 ) {
-    private var isEscape = false
     private val fovUp = Timer(1_000 / player.maxFps) {
         player.fov++
     }
@@ -64,39 +63,9 @@ class KeyboardController(
         when (e.keyCode) {
             VK_F3 -> player.isShowDebugMenu = player.isShowDebugMenu == false
 
-            VK_ESCAPE -> {
-                if (!isEscape) {
-                    isEscape = true
-                    player.isFreezeRotation = true
-                    player.isFreezeMovement = true
-                    moveMouseWithRobotInput.isFreezeMove = true
-                    singleClient.setVisibleCursor()
-                    singleClient.stopFpsCounter()
-                    moveToForward.stop()
-                    moveToBack.stop()
-                    moveToLeft.stop()
-                    moveToRight.stop()
-                } else {
-                    isEscape = false
-                    player.isFreezeRotation = false
-                    player.isFreezeMovement = false
-                    moveMouseWithRobotInput.isFreezeMove = false
-                    singleClient.setInvisibleCursor()
-                    singleClient.startFpsCounter()
-                }
-            }
+            VK_ESCAPE -> menu()
 
-            VK_F11 -> {
-                if (isFullscreen) {
-                    isFullscreen = false
-                    singleClient.setWindowedMode()
-                    singleClient.playerFrame.pack()
-                    singleClient.moveToScreenCenter()
-                } else {
-                    isFullscreen = true
-                    singleClient.setFullscreenMode()
-                }
-            }
+            VK_F11 -> fullscreen()
 
             VK_LEFT -> {
                 fovUp.start()
@@ -121,6 +90,46 @@ class KeyboardController(
             VK_END -> {
                 qualityDown.start()
             }
+        }
+    }
+
+    private fun menu() {
+        if (!player.isEscape) {
+            player.isEscape = true
+            player.isFreezeRotation = true
+            player.isFreezeMovement = true
+            moveMouseWithRobotInput.isFreezeMove = true
+            cameraLayers.sliders.forEach { e ->
+                e.isVisible = true
+            }
+            singleClient.setVisibleCursor()
+            singleClient.stopFpsCounter()
+            moveToForward.stop()
+            moveToBack.stop()
+            moveToLeft.stop()
+            moveToRight.stop()
+        } else {
+            player.isEscape = false
+            player.isFreezeRotation = false
+            player.isFreezeMovement = false
+            moveMouseWithRobotInput.isFreezeMove = false
+            cameraLayers.sliders.forEach { e ->
+                e.isVisible = false
+            }
+            singleClient.setInvisibleCursor()
+            singleClient.startFpsCounter()
+        }
+    }
+
+    private fun fullscreen() {
+        if (isFullscreen) {
+            isFullscreen = false
+            singleClient.setWindowedMode()
+            singleClient.playerFrame.pack()
+            singleClient.moveToScreenCenter()
+        } else {
+            isFullscreen = true
+            singleClient.setFullscreenMode()
         }
     }
 

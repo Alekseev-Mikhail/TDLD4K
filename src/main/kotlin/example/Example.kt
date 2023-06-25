@@ -4,7 +4,7 @@ import tdld4k.SingleClient
 import tdld4k.controllers.MoveMouseWithRobotInput
 import tdld4k.debug.DebugObject
 import tdld4k.math.Vector2Double
-import tdld4k.player.PlayerHeightLimits.MAX_HEIGHT
+import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
@@ -14,6 +14,7 @@ import java.awt.Color.DARK_GRAY
 import java.awt.Color.GRAY
 import java.awt.Color.ORANGE
 import java.awt.Color.YELLOW
+import java.awt.Font
 import java.awt.Font.PLAIN
 import java.awt.Point
 import java.awt.Toolkit
@@ -51,7 +52,7 @@ fun main() {
     val world = World(map, mapWidth, tileSize, ' ', FullTile(BLUE), tileTypes)
     val player = ExamplePlayer(
         10.0,
-        MAX_HEIGHT.value,
+        MID_HEIGHT.value,
         10.0,
         0.0,
         1.0,
@@ -63,18 +64,17 @@ fun main() {
         60,
         isFreezeMovement = false,
         isFreezeRotation = false,
-        isShowDebugMenu = false,
     )
-    val cameraLayers = CameraLayers(
+    val singleClient = SingleClient(world, player)
+    val cameraLayers = Menus(
+        singleClient,
         player,
-        25,
-        PLAIN,
-        Point(5, 5),
-        8,
         Color(82, 82, 82, 190),
+        8,
+        Font("debug menu", PLAIN, 25),
         Color(240, 240, 240, 220),
+        Point(5, 5),
     )
-    val singleClient = SingleClient(world, cameraLayers, player)
     val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
     val keyboardController = KeyboardController(
         world,
@@ -84,6 +84,7 @@ fun main() {
         VK_D,
         singleClient,
         player,
+        cameraLayers,
         true,
         moveMouseWithRobotInput,
     )
@@ -114,5 +115,8 @@ fun main() {
 
     cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", singleClient.version))))
     cameraLayers.addDebugObject(player)
+    singleClient.setCameraLayers(cameraLayers)
+    singleClient.addComponents()
+    player.addListenerForTechOptions { singleClient.playerFrame.repaint() }
     singleClient.startFpsCounter()
 }
