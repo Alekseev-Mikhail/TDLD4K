@@ -6,7 +6,7 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-class GameRayWork(private val world: World, private val player: Player) {
+class RayWork(private val world: World, private val player: Player) {
     fun rayCasting(angle: Double): RayCastingOutput {
         for (c in 0.0..player.renderDistance step player.quality) {
             val point = pointOfRay(c, angle)

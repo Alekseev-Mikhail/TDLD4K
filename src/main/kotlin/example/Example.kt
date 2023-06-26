@@ -105,13 +105,14 @@ fun main() {
     singleClient.setCurrentCursor(firstCustomCursor)
 
     singleClient.initializationFrame(keyboardController, mouseController)
-    singleClient.setFullscreenMode()
+//    singleClient.setFullscreenMode()
 
     singleClient.setInvisibleCursor()
     singleClient.playerFrame.title = "Example"
     singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
     singleClient.playerFrame.isVisible = true
     singleClient.changeFrameSize(512, 512)
+    singleClient.playerFrame.pack()
 
     cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", singleClient.version))))
     cameraLayers.addDebugObject(player)
