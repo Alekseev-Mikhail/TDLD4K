@@ -3,7 +3,7 @@ package tdld4k.world
 import tdld4k.math.Vector2Double
 import java.awt.Paint
 
-data class AABBTile(
+class AABBTile(
     override val paint: Paint,
     private val leftTop: Vector2Double,
     private val rightBot: Vector2Double,
