@@ -1,11 +1,13 @@
 package tdld4k.math
 
-import tdld4k.world.TileShape
+import tdld4k.world.Tile
 
 data class PointOfRayOutput(
     val vector: Vector2Double,
-    val tileShape: TileShape?,
+    val tile: Tile,
     val isWall: Boolean,
     val xMap: Int,
-    val zMap: Int,
+    val yMap: Int,
+    val xDistanceToStart: Double,
+    val yDistanceToStart: Double,
 )

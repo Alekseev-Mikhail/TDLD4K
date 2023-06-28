@@ -6,6 +6,7 @@ import tdld4k.debug.DebugObject
 import tdld4k.math.Vector2Double
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
 import tdld4k.world.AABBTile
+import tdld4k.world.AirTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
 import java.awt.Color
@@ -26,7 +27,7 @@ import java.awt.event.KeyEvent.VK_W
 fun main() {
     val map = "11111111111111111" +
         "1   4  1        1" +
-        "1   4    1 111111" +
+        "1 1 4    1 111111" +
         "1   4 3  1      1" +
         "1    11111111   1" +
         "1          1    1" +
@@ -42,18 +43,19 @@ fun main() {
         "1               1" +
         "11111111111111111"
     val mapWidth = 17
-    val tileSize = 5
+    val tileSize = 5.0
     val tileTypes = mapOf(
-        Pair('1', FullTile(GRAY)),
-        Pair('2', FullTile(DARK_GRAY)),
+        Pair(' ', AirTile()),
+        Pair('1', FullTile(GRAY, tileSize)),
+        Pair('2', FullTile(DARK_GRAY, tileSize)),
         Pair('3', AABBTile(YELLOW, Vector2Double(1.0, 1.0), Vector2Double(4.0, 4.0))),
         Pair('4', AABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
     )
-    val world = World(map, mapWidth, tileSize, ' ', FullTile(BLUE), tileTypes)
+    val world = World(map, mapWidth, tileSize, FullTile(BLUE, tileSize), tileTypes)
     val player = ExamplePlayer(
-        10.0,
+        6.0,
         MID_HEIGHT.value,
-        10.0,
+        6.0,
         0.0,
         1.0,
         70.0,
@@ -111,7 +113,7 @@ fun main() {
     singleClient.playerFrame.title = "Example"
     singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
     singleClient.playerFrame.isVisible = true
-    singleClient.changeFrameSize(512, 512)
+    singleClient.changeFrameSize(800, 800)
     singleClient.playerFrame.pack()
 
     cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", singleClient.version))))

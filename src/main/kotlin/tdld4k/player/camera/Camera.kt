@@ -3,6 +3,13 @@ package tdld4k.player.camera
 import tdld4k.math.RayWork
 import tdld4k.player.Player
 import tdld4k.player.TranslatedToRadians
+import tdld4k.player.camera.WallPart.BOT
+import tdld4k.player.camera.WallPart.LEFT
+import tdld4k.player.camera.WallPart.NOTHING
+import tdld4k.player.camera.WallPart.RIGHT
+import tdld4k.player.camera.WallPart.TOP
+import tdld4k.world.AirTile
+import tdld4k.world.TileShape
 import tdld4k.world.World
 import java.awt.Color.BLACK
 import java.awt.Graphics
@@ -53,6 +60,9 @@ class Camera(
         val fov = translatedPlayer.fov
         val firstAngle = direction - fov / 2
         val firstRc = rayWork.rayCasting(firstAngle)
+        val xFirstDistance = firstRc.xDistanceToStart
+        val yFirstDistance = firstRc.yDistanceToStart
+        val firstTileShape = firstRc.tile as TileShape
 
         fun addPairOfPointToList(wallDistance: Double, angle: Double, x: Int) {
             val column = height / (wallDistance * cos(angle - direction))
@@ -73,22 +83,40 @@ class Camera(
             )
         }
 
-        var lastTileShape = Point(0, 0)
+        var coordinatesLastTileShape = Point(0, 0)
         var lastWallDistance = firstRc.wallDistance
         var lastAngle = firstAngle
+        var lastSide = when {
+            xFirstDistance > yFirstDistance && yFirstDistance < player.quality -> TOP
+            xFirstDistance < yFirstDistance && yFirstDistance > firstTileShape.rightBot.y - player.quality -> BOT
+            xFirstDistance < yFirstDistance && xFirstDistance < player.quality -> LEFT
+            xFirstDistance > yFirstDistance && xFirstDistance > firstTileShape.rightBot.x - player.quality -> RIGHT
+            else -> NOTHING
+        }
 
         for (x in 0 until width) {
             val angle = direction - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
-            val currentTileShape = Point(rc.xMap, rc.zMap)
+            val coordinatesCurrentTileShape = Point(rc.xMap, rc.yMap)
+            val xDistance = rc.xDistanceToStart
+            val yDistance = rc.yDistanceToStart
+            val currentTileShape = rc.tile as TileShape
+            val currentSide = when {
+                xDistance > yDistance && yDistance < currentTileShape.leftTop.y + player.quality -> TOP
+                xDistance < yDistance && yDistance > currentTileShape.rightBot.y - player.quality -> BOT
+                xDistance < yDistance && xDistance < currentTileShape.leftTop.x + player.quality -> LEFT
+                xDistance > yDistance && xDistance > currentTileShape.rightBot.x - player.quality -> RIGHT
+                else -> NOTHING
+            }
 
-            if (currentTileShape != lastTileShape) {
+            if (coordinatesCurrentTileShape != coordinatesLastTileShape || currentSide != lastSide) {
                 addPairOfPointToList(lastWallDistance, lastAngle, x - 1)
                 addPairOfPointToList(rc.wallDistance, angle, x)
             }
-            lastTileShape = currentTileShape
+            coordinatesLastTileShape = coordinatesCurrentTileShape
             lastWallDistance = rc.wallDistance
             lastAngle = angle
+            lastSide = currentSide
         }
         addPairOfPointToList(lastWallDistance, lastAngle, width)
 
@@ -118,9 +146,10 @@ class Camera(
         for (x in 0 until width) {
             val angle = direction - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
-            if (rc.tileShape != null) {
+            if (rc.tile != AirTile()) {
                 val currentColumn = height / (rc.wallDistance * cos(angle - direction))
-                drawColumn(g2d, rc.tileShape.paint, x, currentColumn)
+                rc.tile as TileShape
+                drawColumn(g2d, rc.tile.paint, x, currentColumn)
             }
         }
     }
@@ -145,4 +174,12 @@ class Camera(
     fun setCameraLayers(cameraLayers: CameraLayers) {
         this.cameraLayers = cameraLayers
     }
+}
+
+private enum class WallPart {
+    TOP,
+    BOT,
+    LEFT,
+    RIGHT,
+    NOTHING,
 }
