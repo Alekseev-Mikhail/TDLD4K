@@ -1,46 +1,67 @@
 package tdld4k.math
 
 import tdld4k.player.Player
+import tdld4k.world.AirTile
 import tdld4k.world.World
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-class GameRayWork(private val world: World, private val player: Player) {
+class RayWork(private val world: World, private val player: Player) {
     fun rayCasting(angle: Double): RayCastingOutput {
         for (c in 0.0..player.renderDistance step player.quality) {
             val point = pointOfRay(c, angle)
             if (point.isWall) {
-                return RayCastingOutput(c, point.tileShape)
+                return RayCastingOutput(
+                    c,
+                    point.tile,
+                    point.xMap,
+                    point.yMap,
+                    point.xDistanceToStart,
+                    point.yDistanceToStart,
+                )
             }
         }
-        return RayCastingOutput(0.0, null)
+        return RayCastingOutput(0.0, AirTile(), 0, 0, 0.0, 0.0)
     }
 
     fun pointOfRay(distance: Double, angle: Double): PointOfRayOutput {
         val tileSize = world.tileSize
 
         val xPointOfRay = player.x + distance * cos(angle)
-        val zPointOfRay = player.z + distance * sin(angle)
+        val yPointOfRay = player.z + distance * sin(angle)
 
         val xDistanceToStart = xPointOfRay % tileSize
-        val zDistanceToStart = zPointOfRay % tileSize
+        val yDistanceToStart = yPointOfRay % tileSize
 
         val xMap = ((xPointOfRay - xDistanceToStart) / tileSize).roundToInt()
-        val zMap = ((zPointOfRay - zDistanceToStart) / tileSize).roundToInt()
+        val yMap = ((yPointOfRay - yDistanceToStart) / tileSize).roundToInt()
 
         val edgeX = world.mapWidth - 1
         val edgeY = world.map.size - 1
-        if (xMap < 0 || zMap < 0 || xMap > edgeX || zMap > edgeY) {
-            return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), null, true)
+        if (xMap < 0 || yMap < 0 || xMap > edgeX || yMap > edgeY) {
+            return PointOfRayOutput(
+                Vector2(xPointOfRay, yPointOfRay),
+                AirTile(),
+                true,
+                xMap,
+                yMap,
+                xDistanceToStart,
+                yDistanceToStart,
+            )
         }
 
-        val tileShape = world[xMap, zMap]
-        if (tileShape != null) {
-            val isWall = tileShape.intersection(Vector2Double(xDistanceToStart, zDistanceToStart))
-            return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), tileShape, isWall)
-        }
-        return PointOfRayOutput(Vector2Double(xPointOfRay, zPointOfRay), null, false)
+        val tile = world[xMap, yMap]
+        val isWall = tile.intersection(Vector2(xDistanceToStart, yDistanceToStart))
+        return PointOfRayOutput(
+            Vector2(xPointOfRay, yPointOfRay),
+            tile,
+            isWall,
+            xMap,
+            yMap,
+            xDistanceToStart,
+            yDistanceToStart,
+        )
     }
 }
 

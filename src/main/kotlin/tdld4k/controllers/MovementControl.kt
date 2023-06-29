@@ -1,6 +1,6 @@
 package tdld4k.controllers
 
-import tdld4k.math.GameRayWork
+import tdld4k.math.RayWork
 import tdld4k.player.Player
 import tdld4k.world.World
 import java.awt.event.KeyAdapter
@@ -15,7 +15,7 @@ abstract class MovementControl(
     private val left: Int,
     private val right: Int,
 ) : KeyAdapter() {
-    private val rayWork = GameRayWork(world, player)
+    private val rayWork = RayWork(world, player)
 
     val moveToForward = Timer(1_000 / player.maxFps) {
         val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.xDirection))
