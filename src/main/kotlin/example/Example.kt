@@ -3,7 +3,7 @@ package example
 import tdld4k.SingleClient
 import tdld4k.controllers.MoveMouseWithRobotInput
 import tdld4k.debug.DebugObject
-import tdld4k.math.Vector2Double
+import tdld4k.math.Vector2
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
 import tdld4k.world.AABBTile
 import tdld4k.world.AirTile
@@ -48,18 +48,18 @@ fun main() {
         Pair(' ', AirTile()),
         Pair('1', FullTile(GRAY, tileSize)),
         Pair('2', FullTile(DARK_GRAY, tileSize)),
-        Pair('3', AABBTile(YELLOW, Vector2Double(1.0, 1.0), Vector2Double(4.0, 4.0))),
-        Pair('4', AABBTile(ORANGE, Vector2Double(0.0, 0.0), Vector2Double(0.1, 5.0))),
+        Pair('3', AABBTile(YELLOW, Vector2(1.0, 1.0), Vector2(4.0, 4.0))),
+        Pair('4', AABBTile(ORANGE, Vector2(0.0, 0.0), Vector2(0.1, 5.0))),
     )
     val world = World(map, mapWidth, tileSize, FullTile(BLUE, tileSize), tileTypes)
     val player = ExamplePlayer(
-        6.0,
+        22.0,
         MID_HEIGHT.value,
-        6.0,
-        0.0,
+        17.0,
+        339.0,
         1.0,
         70.0,
-        10.0,
+        40.0,
         400.0,
         0.05,
         0.2,

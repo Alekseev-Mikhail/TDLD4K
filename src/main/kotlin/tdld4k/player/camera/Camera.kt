@@ -9,9 +9,9 @@ import tdld4k.player.camera.WallPart.NOTHING
 import tdld4k.player.camera.WallPart.RIGHT
 import tdld4k.player.camera.WallPart.TOP
 import tdld4k.world.AirTile
+import tdld4k.world.Tile
 import tdld4k.world.TileShape
 import tdld4k.world.World
-import java.awt.Color.BLACK
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Paint
@@ -46,7 +46,6 @@ class Camera(
             RenderingHints.VALUE_ANTIALIAS_ON,
         )
         cameraLayers.bottom(g2d)
-        drawWallsLikeColumns(g2d, translatedPlayer)
         drawWallsLikeParallelograms(g2d, translatedPlayer)
         cameraLayers.top(g2d)
         fps++
@@ -55,7 +54,8 @@ class Camera(
     }
 
     private fun drawWallsLikeParallelograms(g2d: Graphics2D, translatedPlayer: TranslatedToRadians) {
-        val coordinatesOfWalls = mutableListOf<Pair<Point, Point>>()
+        val polygons = mutableListOf<Polygon>()
+        val tiles = mutableListOf<Tile>()
         val direction = translatedPlayer.xDirection
         val fov = translatedPlayer.fov
         val firstAngle = direction - fov / 2
@@ -64,26 +64,7 @@ class Camera(
         val yFirstDistance = firstRc.yDistanceToStart
         val firstTileShape = firstRc.tile as TileShape
 
-        fun addPairOfPointToList(wallDistance: Double, angle: Double, x: Int) {
-            val column = height / (wallDistance * cos(angle - direction))
-            val rootOfColumn = height / 2 * player.yDirection
-            val topColumn = column * (1 - player.y)
-            val bottomColumn = column * player.y
-            coordinatesOfWalls.add(
-                Pair(
-                    Point(
-                        x,
-                        (rootOfColumn - topColumn).roundToInt(),
-                    ),
-                    Point(
-                        x,
-                        (rootOfColumn + bottomColumn).roundToInt(),
-                    ),
-                ),
-            )
-        }
-
-        var coordinatesLastTileShape = Point(0, 0)
+        var coordinatesLastTile = Point(firstRc.xMap, firstRc.yMap)
         var lastWallDistance = firstRc.wallDistance
         var lastAngle = firstAngle
         var lastSide = when {
@@ -94,10 +75,12 @@ class Camera(
             else -> NOTHING
         }
 
+        tiles.add(world[coordinatesLastTile.x, coordinatesLastTile.y])
+        addPolygon(polygons, direction, lastWallDistance, lastAngle, 0)
         for (x in 0 until width) {
             val angle = direction - fov / 2 + fov * x / width
             val rc = rayWork.rayCasting(angle)
-            val coordinatesCurrentTileShape = Point(rc.xMap, rc.yMap)
+            val coordinatesCurrentTile = Point(rc.xMap, rc.yMap)
             val xDistance = rc.xDistanceToStart
             val yDistance = rc.yDistanceToStart
             val currentTileShape = rc.tile as TileShape
@@ -109,33 +92,77 @@ class Camera(
                 else -> NOTHING
             }
 
-            if (coordinatesCurrentTileShape != coordinatesLastTileShape || currentSide != lastSide) {
-                addPairOfPointToList(lastWallDistance, lastAngle, x - 1)
-                addPairOfPointToList(rc.wallDistance, angle, x)
+            if (coordinatesCurrentTile != coordinatesLastTile || currentSide != lastSide) {
+                tiles.add(world[coordinatesCurrentTile.x, coordinatesCurrentTile.y])
+                addPolygonAndUpdateLast(polygons, direction, lastWallDistance, rc.wallDistance, lastAngle, angle, x)
             }
-            coordinatesLastTileShape = coordinatesCurrentTileShape
+            coordinatesLastTile = coordinatesCurrentTile
             lastWallDistance = rc.wallDistance
             lastAngle = angle
             lastSide = currentSide
         }
-        addPairOfPointToList(lastWallDistance, lastAngle, width)
+        updatePolygon(polygons, direction, lastWallDistance, lastAngle, width)
 
-        val polygon = Polygon(
-            IntArray(coordinatesOfWalls.size * 2),
-            IntArray(coordinatesOfWalls.size * 2),
-            coordinatesOfWalls.size * 2,
-        )
-        coordinatesOfWalls.forEachIndexed { i, e ->
-            polygon.xpoints[i] = e.first.x
-            polygon.ypoints[i] = e.first.y
+        polygons.forEachIndexed { i, e ->
+            g2d.paint = (tiles[i] as TileShape).paint
+            g2d.fillPolygon(e)
         }
-        coordinatesOfWalls.reverse()
-        coordinatesOfWalls.forEachIndexed { i, e ->
-            polygon.xpoints[coordinatesOfWalls.size + i] = e.second.x
-            polygon.ypoints[coordinatesOfWalls.size + i] = e.second.y
-        }
-        g2d.paint = BLACK
-        g2d.drawPolygon(polygon)
+    }
+
+    private fun addPolygonAndUpdateLast(
+        polygons: MutableList<Polygon>,
+        direction: Double,
+        lastWallDistance: Double,
+        wallDistance: Double,
+        lastAngle: Double,
+        angle: Double,
+        x: Int,
+    ) {
+        updatePolygon(polygons, direction, lastWallDistance, lastAngle, x)
+        addPolygon(polygons, direction, wallDistance, angle, x)
+    }
+
+    private fun updatePolygon(
+        polygons: MutableList<Polygon>,
+        direction: Double,
+        wallDistance: Double,
+        angle: Double,
+        x: Int,
+    ) {
+        val lastPolygon = polygons[polygons.size - 1]
+        val column = height / (wallDistance * cos(angle - direction))
+        val rootOfColumn = height / 2 * player.yDirection
+        val topColumn = column * (1 - player.y)
+        val bottomColumn = column * player.y
+
+        lastPolygon.xpoints[1] = x
+        lastPolygon.xpoints[2] = x
+
+        lastPolygon.ypoints[1] = (rootOfColumn - topColumn).roundToInt()
+        lastPolygon.ypoints[2] = (rootOfColumn + bottomColumn).roundToInt()
+    }
+
+    private fun addPolygon(
+        polygons: MutableList<Polygon>,
+        direction: Double,
+        wallDistance: Double,
+        angle: Double,
+        x: Int,
+    ) {
+        val column = height / (wallDistance * cos(angle - direction))
+        val rootOfColumn = height / 2 * player.yDirection
+        val topColumn = column * (1 - player.y)
+        val bottomColumn = column * player.y
+        val xFirstTwoPoint = IntArray(4)
+        val yFirstTwoPoint = IntArray(4)
+
+        xFirstTwoPoint[0] = x
+        xFirstTwoPoint[3] = x
+
+        yFirstTwoPoint[0] = (rootOfColumn - topColumn).roundToInt()
+        yFirstTwoPoint[3] = (rootOfColumn + bottomColumn).roundToInt()
+
+        polygons.add(Polygon(xFirstTwoPoint, yFirstTwoPoint, 4))
     }
 
     private fun drawWallsLikeColumns(g2d: Graphics2D, translatedPlayer: TranslatedToRadians) {

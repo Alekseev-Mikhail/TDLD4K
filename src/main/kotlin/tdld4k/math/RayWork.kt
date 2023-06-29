@@ -41,7 +41,7 @@ class RayWork(private val world: World, private val player: Player) {
         val edgeY = world.map.size - 1
         if (xMap < 0 || yMap < 0 || xMap > edgeX || yMap > edgeY) {
             return PointOfRayOutput(
-                Vector2Double(xPointOfRay, yPointOfRay),
+                Vector2(xPointOfRay, yPointOfRay),
                 AirTile(),
                 true,
                 xMap,
@@ -52,9 +52,9 @@ class RayWork(private val world: World, private val player: Player) {
         }
 
         val tile = world[xMap, yMap]
-        val isWall = tile.intersection(Vector2Double(xDistanceToStart, yDistanceToStart))
+        val isWall = tile.intersection(Vector2(xDistanceToStart, yDistanceToStart))
         return PointOfRayOutput(
-            Vector2Double(xPointOfRay, yPointOfRay),
+            Vector2(xPointOfRay, yPointOfRay),
             tile,
             isWall,
             xMap,
