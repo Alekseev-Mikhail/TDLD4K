@@ -43,23 +43,23 @@ fun main() {
         "1               1" +
         "11111111111111111"
     val mapWidth = 17
-    val tileSize = 5.0
+    val tileSize = 3.5
     val tileTypes = mapOf(
         Pair(' ', AirTile()),
         Pair('1', FullTile(GRAY, tileSize)),
         Pair('2', FullTile(DARK_GRAY, tileSize)),
-        Pair('3', AABBTile(YELLOW, Vector2(1.0, 1.0), Vector2(4.0, 4.0))),
-        Pair('4', AABBTile(ORANGE, Vector2(0.0, 0.0), Vector2(0.1, 5.0))),
+        Pair('3', AABBTile(YELLOW, Vector2(1.0, 1.0), Vector2(2.5, 2.5))),
+        Pair('4', AABBTile(ORANGE, Vector2(0.0, 0.0), Vector2(0.1, tileSize))),
     )
     val world = World(map, mapWidth, tileSize, FullTile(BLUE, tileSize), tileTypes)
     val player = ExamplePlayer(
-        22.0,
+        6.0,
         MID_HEIGHT.value,
-        17.0,
-        339.0,
+        6.0,
+        0.0,
         1.0,
         70.0,
-        40.0,
+        10.0,
         400.0,
         0.05,
         0.2,
@@ -107,7 +107,6 @@ fun main() {
     singleClient.setCurrentCursor(firstCustomCursor)
 
     singleClient.initializationFrame(keyboardController, mouseController)
-//    singleClient.setFullscreenMode()
 
     singleClient.setInvisibleCursor()
     singleClient.playerFrame.title = "Example"

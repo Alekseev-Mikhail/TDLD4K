@@ -9,7 +9,7 @@ import kotlin.math.sin
 
 class RayWork(private val world: World, private val player: Player) {
     fun rayCasting(angle: Double): RayCastingOutput {
-        for (c in 0.0..player.renderDistance step player.quality) {
+        for (c in 0.0..player.renderDistance step 1 / player.quality) {
             val point = pointOfRay(c, angle)
             if (point.isWall) {
                 return RayCastingOutput(
