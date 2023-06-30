@@ -101,12 +101,13 @@ fun main() {
         Point(0, 0),
         "second custom cursor",
     )
+    val autoEscape = AutoEscape(keyboardController)
 
     mouseController.firstCustomCursor = firstCustomCursor
     mouseController.secondCustomCursor = secondCustomCursor
     singleClient.setCurrentCursor(firstCustomCursor)
 
-    singleClient.initializationFrame(keyboardController, mouseController)
+    singleClient.initializationFrame(keyboardController, mouseController, autoEscape)
 
     singleClient.setInvisibleCursor()
     singleClient.playerFrame.title = "Example"

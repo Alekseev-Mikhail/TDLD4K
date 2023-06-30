@@ -10,6 +10,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Image
 import java.awt.Point
 import java.awt.Toolkit
+import java.awt.event.FocusListener
 import java.awt.event.KeyListener
 import java.awt.event.MouseMotionListener
 import java.awt.image.BufferedImage
@@ -35,12 +36,17 @@ class SingleClient(
         fun getImage(name: String): Image = ImageIcon(SingleClient::class.java.getResource(name)).image
     }
 
-    fun initializationFrame(keyboardController: KeyListener, mouseController: MouseMotionListener) {
+    fun initializationFrame(
+        keyboardController: KeyListener? = null,
+        mouseController: MouseMotionListener? = null,
+        focusController: FocusListener? = null,
+    ) {
         playerFrame.contentPane = camera.apply {
             player.addListener { repaint() }
         }
         playerFrame.addKeyListener(keyboardController)
         playerFrame.addMouseMotionListener(mouseController)
+        playerFrame.addFocusListener(focusController)
         playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
     }
 

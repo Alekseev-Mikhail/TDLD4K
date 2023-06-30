@@ -62,7 +62,13 @@ class KeyboardController(
         when (e.keyCode) {
             VK_F3 -> player.isShowDebugMenu = player.isShowDebugMenu == false
 
-            VK_ESCAPE -> menu()
+            VK_ESCAPE -> {
+                if (!player.isEscape) {
+                    menuOn()
+                } else {
+                    menuOff()
+                }
+            }
 
             VK_F11 -> fullscreen()
 
@@ -92,32 +98,32 @@ class KeyboardController(
         }
     }
 
-    private fun menu() {
-        if (!player.isEscape) {
-            player.isEscape = true
-            player.isFreezeRotation = true
-            player.isFreezeMovement = true
-            moveMouseWithRobotInput.isFreezeMove = true
-            cameraLayers.sliders.forEach { e ->
-                e.isVisible = true
-            }
-            singleClient.setVisibleCursor()
-            singleClient.stopFpsCounter()
-            moveToForward.stop()
-            moveToBack.stop()
-            moveToLeft.stop()
-            moveToRight.stop()
-        } else {
-            player.isEscape = false
-            player.isFreezeRotation = false
-            player.isFreezeMovement = false
-            moveMouseWithRobotInput.isFreezeMove = false
-            cameraLayers.sliders.forEach { e ->
-                e.isVisible = false
-            }
-            singleClient.setInvisibleCursor()
-            singleClient.startFpsCounter()
+    fun menuOn() {
+        player.isEscape = true
+        player.isFreezeRotation = true
+        player.isFreezeMovement = true
+        moveMouseWithRobotInput.isFreezeMove = true
+        cameraLayers.sliders.forEach { e ->
+            e.isVisible = true
         }
+        singleClient.setVisibleCursor()
+        singleClient.stopFpsCounter()
+        moveToForward.stop()
+        moveToBack.stop()
+        moveToLeft.stop()
+        moveToRight.stop()
+    }
+
+    fun menuOff() {
+        player.isEscape = false
+        player.isFreezeRotation = false
+        player.isFreezeMovement = false
+        moveMouseWithRobotInput.isFreezeMove = false
+        cameraLayers.sliders.forEach { e ->
+            e.isVisible = false
+        }
+        singleClient.setInvisibleCursor()
+        singleClient.startFpsCounter()
     }
 
     private fun fullscreen() {
