@@ -1,19 +1,18 @@
 package example
 
-import tdld4k.SingleClient
-import tdld4k.controllers.MoveMouseWithRobotInput
+import tdld4k.Client
+import tdld4k.controllers.MouseMove
 import tdld4k.debug.DebugObject
-import tdld4k.math.Vector2
+import tdld4k.math.Vector
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
-import tdld4k.world.AABBTile
-import tdld4k.world.AirTile
-import tdld4k.world.FullTile
 import tdld4k.world.World
+import tdld4k.world.fromAABBTile
+import tdld4k.world.fromFullTile
 import java.awt.Color
+import java.awt.Color.BLACK
 import java.awt.Color.BLUE
-import java.awt.Color.DARK_GRAY
+import java.awt.Color.CYAN
 import java.awt.Color.GRAY
-import java.awt.Color.ORANGE
 import java.awt.Color.YELLOW
 import java.awt.Font
 import java.awt.Font.PLAIN
@@ -23,54 +22,57 @@ import java.awt.event.KeyEvent.VK_A
 import java.awt.event.KeyEvent.VK_D
 import java.awt.event.KeyEvent.VK_S
 import java.awt.event.KeyEvent.VK_W
+import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 fun main() {
-    val map = "11111111111111111" +
-        "1   4  1        1" +
-        "1 1 4    1 111111" +
-        "1   4 3  1      1" +
-        "1    11111111   1" +
-        "1          1    1" +
-        "1111 1111  1  111" +
-        "1          1  1 1" +
-        "1   111    1  1 1" +
-        "1               1" +
-        "111111     1  111" +
-        "1  1       1  1 1" +
-        "1     111111    1" +
-        "1  1            1" +
-        "1  11  1111   111" +
-        "1               1" +
-        "11111111111111111"
-    val mapWidth = 17
-    val tileSize = 3.5
+    val map = "11 e1" +
+        "1   1" +
+        "1 2 1" +
+        "1   1" +
+        "1 3 1" +
+        "1   1" +
+        "111 1" +
+        "1   1" +
+        "1   1" +
+        "1   1" +
+        "1   1" +
+        "1   1" +
+        "1   1" +
+        "1   1" +
+        "11111"
+    val mapWidth = 5
+    val tileSize = 3.0
+    val quality = 50.0
+    val airCode = ' '
+    val errorTile = fromFullTile(BLUE)
     val tileTypes = mapOf(
-        Pair(' ', AirTile()),
-        Pair('1', FullTile(GRAY, tileSize)),
-        Pair('2', FullTile(DARK_GRAY, tileSize)),
-        Pair('3', AABBTile(YELLOW, Vector2(1.0, 1.0), Vector2(2.5, 2.5))),
-        Pair('4', AABBTile(ORANGE, Vector2(0.0, 0.0), Vector2(0.1, tileSize))),
+        '1' to fromFullTile(GRAY),
+        '2' to fromAABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
+        '3' to fromAABBTile(CYAN, Vector(0.0, 0.0), Vector(0.1, tileSize)),
     )
-    val world = World(map, mapWidth, tileSize, FullTile(BLUE, tileSize), tileTypes)
+    val world = World(map, mapWidth, tileSize, quality, tileTypes, airCode, errorTile)
+    world.outOfWorldTile = fromFullTile(BLACK)
+
     val player = ExamplePlayer(
-        6.0,
+        tileSize + tileSize / 2,
         MID_HEIGHT.value,
-        6.0,
-        0.0,
+        tileSize + tileSize / 2,
+        270.0,
         1.0,
-        70.0,
-        10.0,
+        75.0,
+        quality,
         400.0,
         0.05,
         0.2,
-        0.001,
+        0.005,
         60,
         isFreezeMovement = false,
         isFreezeRotation = false,
     )
-    val singleClient = SingleClient(world, player)
+
+    val client = Client(world, player)
     val cameraLayers = Menus(
-        singleClient,
+        client,
         player,
         Color(82, 82, 82, 190),
         8,
@@ -78,48 +80,52 @@ fun main() {
         Color(240, 240, 240, 220),
         Point(5, 5),
     )
-    val moveMouseWithRobotInput = MoveMouseWithRobotInput(isRobot = false, isFreezeMove = false)
+    val mouseMove = MouseMove(isRobot = false, isFreezeMove = false)
     val keyboardController = KeyboardController(
         world,
         VK_W,
         VK_S,
         VK_A,
         VK_D,
-        singleClient,
+        client,
         player,
         cameraLayers,
-        moveMouseWithRobotInput,
+        mouseMove,
     )
-    val mouseController = MouseController(singleClient, player, moveMouseWithRobotInput)
+    val autoEscape = AutoEscape(keyboardController)
+    val mouseController = MouseController(client, player, mouseMove)
     val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        SingleClient.getImage("/example/cursor.png"),
+        Client.getImage("/example/cursor.png"),
         Point(0, 0),
         "first custom cursor",
     )
     val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        SingleClient.getImage("/example/cursor1.png"),
+        Client.getImage("/example/cursor1.png"),
         Point(0, 0),
         "second custom cursor",
     )
-    val autoEscape = AutoEscape(keyboardController)
 
     mouseController.firstCustomCursor = firstCustomCursor
     mouseController.secondCustomCursor = secondCustomCursor
-    singleClient.setCurrentCursor(firstCustomCursor)
+    client.setCurrentCursor(firstCustomCursor)
 
-    singleClient.initializationFrame(keyboardController, mouseController, autoEscape)
+    client.setCamera()
+    client.playerFrame.addKeyListener(keyboardController)
+    client.playerFrame.addMouseMotionListener(mouseController)
+    client.playerFrame.addFocusListener(autoEscape)
+    client.playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
 
-    singleClient.setInvisibleCursor()
-    singleClient.playerFrame.title = "Example"
-    singleClient.playerFrame.iconImage = SingleClient.getImage("/example/icon.jpg")
-    singleClient.playerFrame.isVisible = true
-    singleClient.changeFrameSize(800, 800)
-    singleClient.playerFrame.pack()
+    client.setInvisibleCursor()
+    client.playerFrame.title = "Example"
+    client.playerFrame.iconImage = Client.getImage("/example/icon.jpg")
+    client.playerFrame.isVisible = true
+    client.changeFrameSize(800, 800)
+    client.playerFrame.pack()
 
-    cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", singleClient.version))))
+    cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", client.version))))
     cameraLayers.addDebugObject(player)
-    singleClient.setCameraLayers(cameraLayers)
-    singleClient.addComponents()
-    player.addListenerForTechOptions { singleClient.playerFrame.repaint() }
-    singleClient.startFpsCounter()
+    client.setCameraLayers(cameraLayers)
+    client.addComponents()
+    player.addListenerForTechOptions { client.playerFrame.repaint() }
+    client.startFpsCounter()
 }

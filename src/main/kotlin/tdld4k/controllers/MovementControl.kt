@@ -1,6 +1,6 @@
 package tdld4k.controllers
 
-import tdld4k.math.RayWork
+import tdld4k.math.RayHandle
 import tdld4k.player.Player
 import tdld4k.world.World
 import java.awt.event.KeyAdapter
@@ -15,28 +15,28 @@ abstract class MovementControl(
     private val left: Int,
     private val right: Int,
 ) : KeyAdapter() {
-    private val rayWork = RayWork(world, player)
+    private val rayHandle = RayHandle(world, player)
 
     val moveToForward = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.xDirection))
+        val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection))
         player.x = point.vector.x
         player.z = point.vector.y
     }
 
     val moveToBack = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.xDirection + 180))
+        val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection + 180))
         player.x = point.vector.x
         player.z = point.vector.y
     }
 
     val moveToLeft = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.xDirection - 90))
+        val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection - 90))
         player.x = point.vector.x
         player.z = point.vector.y
     }
 
     val moveToRight = Timer(1_000 / player.maxFps) {
-        val point = rayWork.pointOfRay(player.movementSpeed, Math.toRadians(player.xDirection + 90))
+        val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection + 90))
         player.x = point.vector.x
         player.z = point.vector.y
     }

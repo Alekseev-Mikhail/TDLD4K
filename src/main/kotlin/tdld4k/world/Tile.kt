@@ -1,7 +1,10 @@
 package tdld4k.world
 
-import tdld4k.math.Vector2
+import java.awt.Color
 
-interface Tile {
-    fun intersection(point: Vector2): Boolean
+val AIR_TILE = Tile(null)
+val ERROR_TILE = fromFullTile(Color(207, 3, 252))
+
+data class Tile(val tileShape: TileShape?, val isAir: Boolean) {
+    constructor(tileShape: TileShape?) : this(tileShape, tileShape == null)
 }

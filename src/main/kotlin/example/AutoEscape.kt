@@ -8,4 +8,3 @@ class AutoEscape(private val keyboardController: KeyboardController) : FocusAdap
         keyboardController.menuOn()
     }
 }
-                                                                                

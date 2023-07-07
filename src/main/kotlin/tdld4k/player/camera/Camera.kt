@@ -1,34 +1,37 @@
 package tdld4k.player.camera
 
-import tdld4k.math.RayWork
+import tdld4k.math.Ray
+import tdld4k.math.RayHandle
 import tdld4k.player.Player
 import tdld4k.player.TranslatedToRadians
-import tdld4k.player.camera.WallPart.BACK
-import tdld4k.player.camera.WallPart.FORWARD
-import tdld4k.player.camera.WallPart.LEFT
-import tdld4k.player.camera.WallPart.NOTHING
-import tdld4k.player.camera.WallPart.RIGHT
-import tdld4k.world.AirTile
+import tdld4k.player.camera.WallSide.BACK
+import tdld4k.player.camera.WallSide.FORWARD
+import tdld4k.player.camera.WallSide.LEFT
+import tdld4k.player.camera.WallSide.NONE
+import tdld4k.player.camera.WallSide.RIGHT
+import tdld4k.tileMustBeNotNull
 import tdld4k.world.Tile
-import tdld4k.world.TileShape
 import tdld4k.world.World
+import java.awt.Color.BLACK
 import java.awt.Graphics
 import java.awt.Graphics2D
-import java.awt.Point
 import java.awt.Polygon
-import java.awt.RenderingHints
+import java.awt.RenderingHints.KEY_ANTIALIASING
+import java.awt.RenderingHints.VALUE_ANTIALIAS_ON
 import javax.swing.JPanel
 import javax.swing.Timer
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
 class Camera(
-    private val world: World,
+    world: World,
     private val player: Player,
 ) : JPanel() {
-    private val rayWork = RayWork(world, player)
+    private val rayHandle = RayHandle(world, player)
     private var cameraLayers: CameraLayers = CameraLayersAdapter()
     private var fps = 0
+    private var translatedPlayer = TranslatedToRadians(0.0, 0.0)
+    private var isDebugVision = false
     val fpsCounter = Timer(1_000) {
         player.fps = fps
         fps = 0
@@ -36,129 +39,113 @@ class Camera(
 
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
-        val translatedPlayer = player.translateToRadians()
         val g2d = g as Graphics2D
         val prevPaint = g2d.paint
 
         g2d.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON,
+            KEY_ANTIALIASING,
+            VALUE_ANTIALIAS_ON,
         )
         cameraLayers.bottom(g2d)
-        drawWallsLikeParallelograms(g2d, translatedPlayer)
+        drawWalls(g2d)
         cameraLayers.top(g2d)
         fps++
 
         g2d.paint = prevPaint
     }
 
-    private fun drawWallsLikeParallelograms(g2d: Graphics2D, translatedPlayer: TranslatedToRadians) {
+    private fun drawWalls(g2d: Graphics2D) {
+        translatedPlayer = player.translateToRadians()
         val polygons = mutableListOf<Polygon>()
         val tiles = mutableListOf<Tile>()
-        val direction = translatedPlayer.xDirection
-        val fov = translatedPlayer.fov
         val quality = 1 / player.quality
-        val firstAngle = direction - fov / 2
-        val firstRc = rayWork.rayCasting(firstAngle)
-        val xFirstDistance = firstRc.xDistanceToStart
-        val yFirstDistance = firstRc.yDistanceToStart
-        val firstTile = firstRc.tile
 
-        var coordinatesLastTile = Point(firstRc.xMap, firstRc.yMap)
-        var lastWallDistance = firstRc.wallDistance
-        var lastAngle = firstAngle
-        var lastSide = NOTHING
-        if (firstTile !is AirTile) {
-            val firstTileShape = firstTile as TileShape
-            val firstLeftTopX = firstTileShape.leftTop.x
-            val firstLeftTopY = firstTileShape.leftTop.y
-            val firstRightBotX = firstTileShape.rightBot.x
-            val firstRightBotY = firstTileShape.rightBot.y
-            lastSide = when {
-                yFirstDistance in firstLeftTopY..firstLeftTopY + quality -> FORWARD
-                yFirstDistance in firstRightBotY - quality..firstRightBotY -> BACK
-                xFirstDistance in firstLeftTopX..firstLeftTopX + quality -> LEFT
-                xFirstDistance in firstRightBotX - quality..firstRightBotX -> RIGHT
-                else -> NOTHING
-            }
+        var lastRay = fromRayCasting(0)
+        var lastSide = getSide(lastRay, quality)
+        if (!lastRay.tile.isAir) {
+            tiles.add(lastRay.tile)
+            polygons.addPolygon(lastRay.distance, lastRay.angle, 0)
         }
 
-        tiles.add(world[coordinatesLastTile.x, coordinatesLastTile.y])
-        addPolygon(polygons, direction, lastWallDistance, lastAngle, 0)
-        for (x in 0 until width) {
-            val angle = direction - fov / 2 + fov * x / width
-            val rc = rayWork.rayCasting(angle)
-            val coordinatesCurrentTile = Point(rc.xMap, rc.yMap)
-            val xDistance = rc.xDistanceToStart
-            val yDistance = rc.yDistanceToStart
-            val currentTile = rc.tile
+        for (x in 1 until width) {
+            val ray = fromRayCasting(x)
+            val currentSide: WallSide
 
-            if (currentTile !is AirTile) {
-                val currentTileShape = currentTile as TileShape
-                val leftTopX = currentTile.leftTop.x
-                val leftTopY = currentTile.leftTop.y
-                val rightBotX = currentTile.rightBot.x
-                val rightBotY = currentTile.rightBot.y
-                val currentSide = when {
-                    yDistance in leftTopY..leftTopY + quality -> FORWARD
-                    yDistance in rightBotY - quality..rightBotY -> BACK
-                    xDistance in leftTopX..leftTopX + quality -> LEFT
-                    xDistance in rightBotX - quality..rightBotX -> RIGHT
-                    else -> NOTHING
+            if (!ray.tile.isAir) {
+                currentSide = getSide(ray, quality)
+                if (ray.tile != lastRay.tile || lastSide != currentSide) {
+                    tiles.add(ray.tile)
+                    polygons.updateAndAdd(lastRay.distance, ray.distance, lastRay.angle, ray.angle, x)
                 }
-
-                if (lastSide == NOTHING) {
-                    addPolygon(polygons, direction, rc.wallDistance, angle, x)
-                    tiles.add(currentTileShape)
-                } else if (coordinatesCurrentTile != coordinatesLastTile || currentSide != lastSide) {
-                    tiles.add(currentTileShape)
-                    addPolygonAndUpdateLast(polygons, direction, lastWallDistance, rc.wallDistance, lastAngle, angle, x)
+            } else {
+                currentSide = NONE
+                if (lastSide != NONE) {
+                    polygons.updatePolygon(ray.distance, ray.angle, x)
                 }
-
-                lastSide = currentSide
-            } else if (lastSide != NOTHING) {
-                lastSide = NOTHING
-                updatePolygon(polygons, direction, lastWallDistance, lastAngle, x - 1)
             }
-            coordinatesLastTile = coordinatesCurrentTile
-            lastWallDistance = rc.wallDistance
-            lastAngle = angle
-        }
-        if (lastSide != NOTHING) {
-            updatePolygon(polygons, direction, lastWallDistance, lastAngle, width)
+            lastRay = ray
+            lastSide = currentSide
         }
 
-        polygons.forEachIndexed { i, e ->
-            g2d.paint = (tiles[i] as TileShape).paint
-            g2d.fillPolygon(e)
+        if (lastSide != NONE) {
+            polygons.updatePolygon(lastRay.distance, lastRay.angle, width)
+        }
+
+        if (!isDebugVision) {
+            polygons.forEachIndexed { i, e ->
+                g2d.paint = tiles[i].tileShape!!.paint
+                g2d.fillPolygon(e)
+            }
+        } else {
+            polygons.forEachIndexed { i, e ->
+                g2d.paint = BLACK
+                g2d.drawPolygon(e)
+            }
         }
     }
 
-    private fun addPolygonAndUpdateLast(
-        polygons: MutableList<Polygon>,
-        direction: Double,
+    private fun getSide(ray: Ray, quality: Double): WallSide {
+        try {
+            val tileShape = ray.tile.tileShape!!
+            val leftTopX = tileShape.leftTop.x
+            val leftTopY = tileShape.leftTop.y
+            val rightBotX = tileShape.rightBot.x
+            val rightBotY = tileShape.rightBot.y
+            val xDistance = ray.xDistanceToStart
+            val yDistance = ray.yDistanceToStart
+            return when {
+                yDistance in leftTopY..leftTopY + quality -> FORWARD
+                yDistance in rightBotY - quality..rightBotY -> BACK
+                xDistance in leftTopX..leftTopX + quality -> LEFT
+                xDistance in rightBotX - quality..rightBotX -> RIGHT
+                else -> NONE
+            }
+        } catch (e: NullPointerException) {
+            tileMustBeNotNull()
+        }
+    }
+
+    private fun MutableList<Polygon>.updateAndAdd(
         lastWallDistance: Double,
         wallDistance: Double,
         lastAngle: Double,
         angle: Double,
         x: Int,
     ) {
-        updatePolygon(polygons, direction, lastWallDistance, lastAngle, x)
-        addPolygon(polygons, direction, wallDistance, angle, x)
+        updatePolygon(lastWallDistance, lastAngle, x)
+        addPolygon(wallDistance, angle, x)
     }
 
-    private fun updatePolygon(
-        polygons: MutableList<Polygon>,
-        direction: Double,
+    private fun MutableList<Polygon>.updatePolygon(
         wallDistance: Double,
         angle: Double,
         x: Int,
     ) {
-        val lastPolygon = polygons[polygons.size - 1]
-        val column = height / (wallDistance * cos(angle - direction))
+        val lastPolygon = get(size - 1)
+        val columnHeight = height / (wallDistance * cos(angle - translatedPlayer.xDirection))
         val rootOfColumn = height / 2 * player.yDirection
-        val topColumn = column * (1 - player.y)
-        val bottomColumn = column * player.y
+        val topColumn = columnHeight * (1 - player.y)
+        val bottomColumn = columnHeight * player.y
 
         lastPolygon.xpoints[1] = x
         lastPolygon.xpoints[2] = x
@@ -167,28 +154,28 @@ class Camera(
         lastPolygon.ypoints[2] = (rootOfColumn + bottomColumn).roundToInt()
     }
 
-    private fun addPolygon(
-        polygons: MutableList<Polygon>,
-        direction: Double,
+    private fun MutableList<Polygon>.addPolygon(
         wallDistance: Double,
         angle: Double,
         x: Int,
     ) {
-        val column = height / (wallDistance * cos(angle - direction))
+        val newPolygon = Polygon(IntArray(4), IntArray(4), 4)
+        val columnHeight = height / (wallDistance * cos(angle - translatedPlayer.xDirection))
         val rootOfColumn = height / 2 * player.yDirection
-        val topColumn = column * (1 - player.y)
-        val bottomColumn = column * player.y
-        val xFirstTwoPoint = IntArray(4)
-        val yFirstTwoPoint = IntArray(4)
+        val topColumn = columnHeight * (1 - player.y)
+        val bottomColumn = columnHeight * player.y
 
-        xFirstTwoPoint[0] = x
-        xFirstTwoPoint[3] = x
+        newPolygon.xpoints[0] = x
+        newPolygon.xpoints[3] = x
 
-        yFirstTwoPoint[0] = (rootOfColumn - topColumn).roundToInt()
-        yFirstTwoPoint[3] = (rootOfColumn + bottomColumn).roundToInt()
+        newPolygon.ypoints[0] = (rootOfColumn - topColumn).roundToInt()
+        newPolygon.ypoints[3] = (rootOfColumn + bottomColumn).roundToInt()
 
-        polygons.add(Polygon(xFirstTwoPoint, yFirstTwoPoint, 4))
+        add(newPolygon)
     }
+
+    private fun fromRayCasting(x: Int) =
+        rayHandle.rayCasting(translatedPlayer.xDirection - translatedPlayer.fov / 2 + translatedPlayer.fov * x / width)
 
     fun addComponents() {
         cameraLayers.addComponents(this)
@@ -197,12 +184,20 @@ class Camera(
     fun setCameraLayers(cameraLayers: CameraLayers) {
         this.cameraLayers = cameraLayers
     }
+
+    fun enableDebugVision() {
+        isDebugVision = true
+    }
+
+    fun disableDebugVision() {
+        isDebugVision = false
+    }
 }
 
-private enum class WallPart {
+private enum class WallSide {
     FORWARD,
     BACK,
     LEFT,
     RIGHT,
-    NOTHING,
+    NONE,
 }

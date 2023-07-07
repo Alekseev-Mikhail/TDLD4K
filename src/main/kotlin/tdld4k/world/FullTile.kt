@@ -1,13 +1,25 @@
 package tdld4k.world
 
-import tdld4k.math.Vector2
+import tdld4k.math.Vector
 import java.awt.Paint
 
-class FullTile(override val paint: Paint, tileSize: Double) : TileShape {
-    override val leftTop = Vector2(0.0, 0.0)
-    override val rightBot = Vector2(tileSize, tileSize)
+class FullTile(override val paint: Paint) : TileShape() {
+    override var leftTop = Vector(0.0, 0.0)
+    override var rightBot = Vector(0.0, 0.0)
 
-    override fun intersection(point: Vector2): Boolean {
+    override fun intersection(point: Vector): Boolean {
         return true
     }
+
+    override fun findError(tileSize: Double, quality: Double) {
+        super.findError(tileSize, quality)
+        setTileSize(tileSize)
+    }
+
+    fun setTileSize(value: Double) {
+        leftTop = Vector(0.0, 0.0)
+        rightBot = Vector(value, value)
+    }
 }
+
+fun fromFullTile(paint: Paint) = Tile(FullTile(paint))

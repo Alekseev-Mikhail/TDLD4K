@@ -1,10 +1,19 @@
 package tdld4k.world
 
-import tdld4k.math.Vector2
+import tdld4k.math.Vector
+import tdld4k.qualityMustBeLess
 import java.awt.Paint
 
-interface TileShape : Tile {
-    val leftTop: Vector2
-    val rightBot: Vector2
-    val paint: Paint
+abstract class TileShape {
+    abstract val leftTop: Vector
+    abstract val rightBot: Vector
+    abstract val paint: Paint
+
+    abstract fun intersection(point: Vector): Boolean
+
+    open fun findError(tileSize: Double, quality: Double) {
+        if (quality > (rightBot.x - leftTop.x) / 2 || quality > (rightBot.y - leftTop.y) / 2) {
+//            qualityMustBeLess()
+        }
+    }
 }

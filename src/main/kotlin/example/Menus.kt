@@ -1,6 +1,6 @@
 package example
 
-import tdld4k.SingleClient
+import tdld4k.Client
 import tdld4k.debug.DebugMenu
 import java.awt.Dimension
 import java.awt.Font
@@ -12,7 +12,7 @@ import javax.swing.JSlider
 import kotlin.math.roundToInt
 
 class Menus(
-    private val singleClient: SingleClient,
+    private val client: Client,
     private val player: ExamplePlayer,
     private val labelPaint: Paint,
     private val margin: Int,
@@ -26,14 +26,13 @@ class Menus(
     labelPaint,
     textPaint,
 ) {
-    private val sliderCounts = 3
-    private val descriptions = MutableList(sliderCounts) { "" }
-    val sliders = List(sliderCounts) { JSlider() }
+    private val descriptions = mutableListOf<String>()
+    val sliders = mutableListOf<JSlider>()
 
     override fun top(g2d: Graphics2D) {
         if (player.isEscape) {
             g2d.paint = labelPaint
-            g2d.fillRect(0, 0, singleClient.playerFrame.width, singleClient.playerFrame.height)
+            g2d.fillRect(0, 0, client.playerFrame.width, client.playerFrame.height)
 
             g2d.paint = textPaint
             g2d.font = font
@@ -42,7 +41,7 @@ class Menus(
             sliders.forEachIndexed { i, e ->
                 val yText = ySlider + e.height + font.size + margin
                 e.isFocusable = false
-                e.size = Dimension(singleClient.playerFrame.width / 3, e.height)
+                e.size = Dimension(client.playerFrame.width / 3, e.height)
                 e.location = Point(0, ySlider)
                 g2d.drawString(descriptions[i], margin, yText)
                 ySlider = yText + margin
@@ -53,7 +52,8 @@ class Menus(
     }
 
     override fun addComponents(panel: JPanel) {
-        sliders.forEachIndexed { i, slider ->
+        for (i in 0..2) {
+            val slider = JSlider()
             if (!player.isEscape) {
                 slider.isVisible = false
             }
@@ -63,7 +63,8 @@ class Menus(
                     slider.minimum = 60
                     slider.value = player.fov.roundToInt()
                     val value = slider.value
-                    changeFov(value)
+                    player.fov = value.toDouble()
+                    descriptions.add("FOV: $value")
                     slider.addChangeListener { changeFov(slider.value) }
                 }
 
@@ -71,19 +72,22 @@ class Menus(
                     slider.maximum = 100
                     slider.value = player.renderDistance.roundToInt()
                     val value = slider.value
-                    changeRenderDistance(value)
+                    player.renderDistance = value.toDouble()
+                    descriptions.add("Render Distance: $value")
                     slider.addChangeListener { changeRenderDistance(slider.value) }
                 }
 
                 2 -> {
-                    slider.maximum = 100
+                    slider.maximum = 200
                     slider.minimum = 1
                     slider.value = player.quality.roundToInt()
                     val value = slider.value
-                    changeQuality(value)
+                    player.quality = value.toDouble()
+                    descriptions.add("Quality: $value")
                     slider.addChangeListener { changeQuality(slider.value) }
                 }
             }
+            sliders.add(slider)
             panel.add(slider)
         }
     }

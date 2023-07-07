@@ -1,5 +1,6 @@
 package tdld4k.player
 
+import java.lang.Math.toRadians
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.Delegates
 
@@ -27,7 +28,7 @@ open class Player(
     var fov: Double by Delegates.observable(fov) { _, _, _ -> listeners.forEach { it.run() } }
     var quality: Double by Delegates.observable(quality) { _, _, _ -> listeners.forEach { it.run() } }
     var renderDistance: Double by Delegates.observable(renderDistance) { _, _, _ -> listeners.forEach { it.run() } }
-    var fps: Int by Delegates.observable(0) { _, _, _ -> listeners.forEach { it.run() } }
+    var fps = 0
 
     private val listeners = CopyOnWriteArrayList<Runnable>()
 
@@ -35,7 +36,5 @@ open class Player(
         listeners.add(listener)
     }
 
-    fun translateToRadians(): TranslatedToRadians {
-        return TranslatedToRadians(Math.toRadians(xDirection), Math.toRadians(fov))
-    }
+    fun translateToRadians() = TranslatedToRadians(toRadians(xDirection), toRadians(fov))
 }

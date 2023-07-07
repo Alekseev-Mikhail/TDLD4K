@@ -10,20 +10,16 @@ import java.awt.GraphicsEnvironment
 import java.awt.Image
 import java.awt.Point
 import java.awt.Toolkit
-import java.awt.event.FocusListener
-import java.awt.event.KeyListener
-import java.awt.event.MouseMotionListener
 import java.awt.image.BufferedImage
 import javax.swing.ImageIcon
 import javax.swing.JFrame
-import javax.swing.JFrame.EXIT_ON_CLOSE
 
-class SingleClient(
+class Client(
     world: World,
     private val player: Player,
 ) {
     val version: String? = this::class.java.`package`.implementationVersion
-    var playerFrame: JFrame = JFrame()
+    var playerFrame = JFrame()
     private val camera = Camera(world, player)
     private var currentCursor = Cursor.getDefaultCursor()
     private val blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
@@ -33,21 +29,13 @@ class SingleClient(
     )
 
     companion object {
-        fun getImage(name: String): Image = ImageIcon(SingleClient::class.java.getResource(name)).image
+        fun getImage(name: String): Image = ImageIcon(this::class.java.getResource(name)).image
     }
 
-    fun initializationFrame(
-        keyboardController: KeyListener? = null,
-        mouseController: MouseMotionListener? = null,
-        focusController: FocusListener? = null,
-    ) {
+    fun setCamera() {
         playerFrame.contentPane = camera.apply {
             player.addListener { repaint() }
         }
-        playerFrame.addKeyListener(keyboardController)
-        playerFrame.addMouseMotionListener(mouseController)
-        playerFrame.addFocusListener(focusController)
-        playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
     }
 
     fun moveToScreenCenter() {
@@ -103,5 +91,13 @@ class SingleClient(
 
     fun setCameraLayers(cameraLayers: CameraLayers) {
         camera.setCameraLayers(cameraLayers)
+    }
+
+    fun enableDebugVision() {
+        camera.enableDebugVision()
+    }
+
+    fun disableDebugVision() {
+        camera.disableDebugVision()
     }
 }
