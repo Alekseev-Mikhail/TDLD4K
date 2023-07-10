@@ -9,7 +9,6 @@ import tdld4k.player.camera.WallSide.FORWARD
 import tdld4k.player.camera.WallSide.LEFT
 import tdld4k.player.camera.WallSide.NONE
 import tdld4k.player.camera.WallSide.RIGHT
-import tdld4k.tileMustBeNotNull
 import tdld4k.world.Tile
 import tdld4k.world.World
 import java.awt.Color.BLACK
@@ -20,11 +19,12 @@ import java.awt.RenderingHints.KEY_ANTIALIASING
 import java.awt.RenderingHints.VALUE_ANTIALIAS_ON
 import javax.swing.JPanel
 import javax.swing.Timer
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
 class Camera(
-    world: World,
+    private val world: World,
     private val player: Player,
 ) : JPanel() {
     private val rayHandle = RayHandle(world, player)
@@ -61,10 +61,10 @@ class Camera(
         val quality = 1 / player.quality
 
         var lastRay = fromRayCasting(0)
-        var lastSide = getSide(lastRay, quality)
+        var lastSide = if (!lastRay.tile.isAir) getSide(lastRay, quality) else NONE
         if (!lastRay.tile.isAir) {
             tiles.add(lastRay.tile)
-            polygons.addPolygon(lastRay.distance, lastRay.angle, 0)
+            polygons.addPolygon(lastRay.distance, lastRay.angle, -1)
         }
 
         for (x in 1 until width) {
@@ -73,31 +73,36 @@ class Camera(
 
             if (!ray.tile.isAir) {
                 currentSide = getSide(ray, quality)
-                if (ray.tile != lastRay.tile || lastSide != currentSide) {
+                if (lastSide != NONE) {
+                    if (ray.tile != lastRay.tile || lastSide != currentSide) {
+                        tiles.add(ray.tile)
+                        polygons.updateAndAdd(lastRay.distance, ray.distance, lastRay.angle, ray.angle, x)
+                    }
+                } else {
                     tiles.add(ray.tile)
-                    polygons.updateAndAdd(lastRay.distance, ray.distance, lastRay.angle, ray.angle, x)
+                    polygons.addPolygon(ray.distance, ray.angle, x)
                 }
             } else {
                 currentSide = NONE
                 if (lastSide != NONE) {
-                    polygons.updatePolygon(ray.distance, ray.angle, x)
+                    polygons.updatePolygon(lastRay.distance, lastRay.angle, x)
                 }
             }
             lastRay = ray
             lastSide = currentSide
         }
 
-        if (lastSide != NONE) {
+        if (lastSide != NONE || lastRay.tile.isOutOfWorldTile) {
             polygons.updatePolygon(lastRay.distance, lastRay.angle, width)
         }
 
         if (!isDebugVision) {
             polygons.forEachIndexed { i, e ->
-                g2d.paint = tiles[i].tileShape!!.paint
+                g2d.paint = tiles[i].tileShape?.paint ?: world.outOfWorldPaint
                 g2d.fillPolygon(e)
             }
         } else {
-            polygons.forEachIndexed { i, e ->
+            polygons.forEach { e ->
                 g2d.paint = BLACK
                 g2d.drawPolygon(e)
             }
@@ -105,14 +110,14 @@ class Camera(
     }
 
     private fun getSide(ray: Ray, quality: Double): WallSide {
-        try {
+        if (!ray.tile.isOutOfWorldTile) {
+            val xDistance = ray.tilePoint.x
+            val yDistance = ray.tilePoint.y
             val tileShape = ray.tile.tileShape!!
             val leftTopX = tileShape.leftTop.x
             val leftTopY = tileShape.leftTop.y
             val rightBotX = tileShape.rightBot.x
             val rightBotY = tileShape.rightBot.y
-            val xDistance = ray.xDistanceToStart
-            val yDistance = ray.yDistanceToStart
             return when {
                 yDistance in leftTopY..leftTopY + quality -> FORWARD
                 yDistance in rightBotY - quality..rightBotY -> BACK
@@ -120,8 +125,17 @@ class Camera(
                 xDistance in rightBotX - quality..rightBotX -> RIGHT
                 else -> NONE
             }
-        } catch (e: NullPointerException) {
-            tileMustBeNotNull()
+        } else {
+            val xDistance = abs(ray.tilePoint.x)
+            val yDistance = abs(ray.tilePoint.y)
+            val tileSize = world.tileSize
+            return when {
+                yDistance in 0.0..quality -> FORWARD
+                yDistance in tileSize - quality..tileSize -> BACK
+                xDistance in 0.0..quality -> LEFT
+                xDistance in tileSize - quality..tileSize -> RIGHT
+                else -> NONE
+            }
         }
     }
 

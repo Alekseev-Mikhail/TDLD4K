@@ -7,7 +7,7 @@ class AABBTile(
     override val paint: Paint,
     override val leftTop: Vector,
     override val rightBot: Vector,
-) : TileShape() {
+) : TileShape {
     override fun intersection(point: Vector): Boolean {
         return point.y in leftTop.y..rightBot.y && point.x in leftTop.x..rightBot.x
     }

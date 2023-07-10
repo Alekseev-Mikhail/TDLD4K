@@ -1,14 +1,13 @@
 package tdld4k.math
 
 import tdld4k.world.Tile
+import java.awt.Point
 
 data class Ray(
     val tile: Tile,
-    val vector: Vector = Vector(0.0, 0.0),
-    val xMap: Int = 0,
-    val yMap: Int = 0,
-    val xDistanceToStart: Double = 0.0,
-    val yDistanceToStart: Double = 0.0,
+    val rayPoint: Vector = Vector(0.0, 0.0),
+    val tilePoint: Vector = Vector(0.0, 0.0),
+    val mapPoint: Point = Point(0, 0),
     val distance: Double = 0.0,
     val angle: Double = 0.0,
 )

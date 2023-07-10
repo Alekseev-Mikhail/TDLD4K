@@ -5,14 +5,15 @@ import tdld4k.controllers.MouseMove
 import tdld4k.debug.DebugObject
 import tdld4k.math.Vector
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
+import tdld4k.world.AABBTile
+import tdld4k.world.FullTile
 import tdld4k.world.World
-import tdld4k.world.fromAABBTile
-import tdld4k.world.fromFullTile
 import java.awt.Color
 import java.awt.Color.BLACK
 import java.awt.Color.BLUE
 import java.awt.Color.CYAN
 import java.awt.Color.GRAY
+import java.awt.Color.RED
 import java.awt.Color.YELLOW
 import java.awt.Font
 import java.awt.Font.PLAIN
@@ -25,33 +26,34 @@ import java.awt.event.KeyEvent.VK_W
 import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 fun main() {
-    val map = "11 e1" +
-        "1   1" +
-        "1 2 1" +
-        "1   1" +
-        "1 3 1" +
+    val map = "  1e1" +
+        "    1" +
+        "1 4 1" +
+        "2   1" +
+        "2 3 1" +
         "1   1" +
         "111 1" +
         "1   1" +
+        "2   1" +
+        "2   1" +
+        "2   1" +
         "1   1" +
-        "1   1" +
-        "1   1" +
-        "1   1" +
-        "1   1" +
+        "2   1" +
         "1   1" +
         "11111"
     val mapWidth = 5
-    val tileSize = 3.0
+    val tileSize = 2.0
     val quality = 50.0
     val airCode = ' '
-    val errorTile = fromFullTile(BLUE)
+    val errorTile = BLUE
     val tileTypes = mapOf(
-        '1' to fromFullTile(GRAY),
-        '2' to fromAABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
-        '3' to fromAABBTile(CYAN, Vector(0.0, 0.0), Vector(0.1, tileSize)),
+        '1' to FullTile(GRAY),
+        '2' to FullTile(RED),
+        '3' to AABBTile(CYAN, Vector(0.0, 0.0), Vector(0.1, tileSize)),
+        '4' to AABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
     )
-    val world = World(map, mapWidth, tileSize, quality, tileTypes, airCode, errorTile)
-    world.outOfWorldTile = fromFullTile(BLACK)
+    val world = World(map, mapWidth, tileTypes, tileSize, quality, airCode, errorTile)
+    world.outOfWorldPaint = BLACK
 
     val player = ExamplePlayer(
         tileSize + tileSize / 2,

@@ -1,65 +1,74 @@
 package tdld4k.world
 
+import java.awt.Paint
+
+private var errorPaint = ERROR_PAINT
+
 data class World(
     val map: List<List<Tile>>,
     val mapWidth: Int,
     val tileSize: Double,
-    val airCode: Char,
-    val errorTile: Tile,
-    val tileTypes: Map<Char, Tile>,
 ) {
     constructor(
-        map: String,
+        rawMap: String,
         mapWidth: Int,
+        tileTypes: Map<Char, TileShape>,
         tileSize: Double,
         quality: Double,
-        tileTypes: Map<Char, Tile>,
         airCode: Char,
-        errorTile: Tile? = null,
+        errorPaint: Paint? = null,
     ) : this(
-        map.map { fromTileTypes(tileSize, 1 / quality, tileTypes, airCode, errorTile, it) }.chunked(mapWidth),
+        getMap(rawMap, mapWidth, tileTypes, tileSize, quality, airCode, errorPaint),
         mapWidth,
         tileSize,
-        airCode,
-        getErrorTile(errorTile, tileSize),
-        tileTypes,
     )
 
-    var outOfWorldTile = errorTile
+    var outOfWorldPaint = errorPaint
     val edgeX = mapWidth - 1
     val edgeY = map.size - 1
 
     operator fun get(x: Int, y: Int): Tile = map[y][x]
 }
 
-private fun getErrorTile(tile: Tile?, tileSize: Double) =
-    if (tile?.tileShape != null) {
-        if (tile.tileShape is FullTile) {
-            tile.tileShape.setTileSize(tileSize)
-        }
-        tile
-    } else {
-        val errorTile = ERROR_TILE
-        if (errorTile.tileShape is FullTile) {
-            errorTile.tileShape.setTileSize(tileSize)
-        }
-        errorTile
-    }
-
-private fun fromTileTypes(
+private fun getMap(
+    rawMap: String,
+    mapWidth: Int,
+    tileTypes: Map<Char, TileShape>,
     tileSize: Double,
     quality: Double,
-    tileTypes: Map<Char, Tile>,
     airCode: Char,
-    errorTile: Tile?,
+    errorPaint: Paint?,
+): List<List<Tile>> {
+    val translatedQuality = 1 / quality
+    if (errorPaint != null) tdld4k.world.errorPaint = errorPaint
+    return rawMap.map { fromTileTypes(translatedQuality, tileTypes, tileSize, airCode, it) }.chunked(mapWidth)
+}
+
+private fun fromTileTypes(
+    quality: Double,
+    tileTypes: Map<Char, TileShape>,
+    tileSize: Double,
+    airCode: Char,
     code: Char,
 ): Tile {
-    if (code == airCode) return AIR_TILE
-    val tile = tileTypes[code]
-    if (tile != null) {
-        if (tile.tileShape != null) {
-            tile.tileShape.findError(tileSize, quality)
+    if (code == airCode) return Tile()
+    val exampleTile = tileTypes[code]
+    var tile = fromFullTile(tileSize, errorPaint)
+    if (exampleTile != null) {
+        when (exampleTile) {
+            is FullTile -> tile = fromFullTile(tileSize, exampleTile.paint)
+            is AABBTile -> tile = fromAABBTile(exampleTile.paint, exampleTile.leftTop, exampleTile.rightBot)
         }
     }
-    return tile ?: getErrorTile(errorTile, tileSize)
+    return findError(tile, fromFullTile(tileSize, errorPaint), quality)
+}
+
+private fun findError(tile: Tile, errorTile: Tile, quality: Double): Tile {
+    val leftTop = tile.tileShape!!.leftTop
+    val rightBot = tile.tileShape.rightBot
+    return if (quality > (rightBot.x - leftTop.x) / 2 || quality > (rightBot.y - leftTop.y) / 2) {
+        errorTile
+    } else {
+        tile
+    }
 }

@@ -1,8 +1,9 @@
 package tdld4k.math
 
 import tdld4k.player.Player
-import tdld4k.world.AIR_TILE
+import tdld4k.world.Tile
 import tdld4k.world.World
+import java.awt.Point
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -11,11 +12,17 @@ class RayHandle(private val world: World, private val player: Player) {
     fun rayCasting(angle: Double): Ray {
         for (c in 0.0..player.renderDistance step 1 / player.quality) {
             val ray = ray(c, angle)
-            if (!ray.tile.isAir && ray.tile.tileShape!!.intersection(ray.vector)) {
-                return ray
+            if (!ray.tile.isAir) {
+                if (!ray.tile.isOutOfWorldTile) {
+                    if (ray.tile.tileShape!!.intersection(ray.tilePoint)) {
+                        return ray
+                    }
+                } else {
+                    return ray
+                }
             }
         }
-        return Ray(AIR_TILE)
+        return Ray(Tile())
     }
 
     fun ray(distance: Double, angle: Double): Ray {
@@ -34,12 +41,10 @@ class RayHandle(private val world: World, private val player: Player) {
 
         if (xRayPoint < 0 || yRayPoint < 0 || xMap > edgeX || yMap > edgeY) {
             return Ray(
-                world.outOfWorldTile,
+                Tile(null, false),
                 Vector(xRayPoint, yRayPoint),
-                xMap,
-                yMap,
-                xDistanceToStart,
-                yDistanceToStart,
+                Vector(xDistanceToStart, yDistanceToStart),
+                Point(xMap, yMap),
                 distance,
                 angle,
             )
@@ -49,10 +54,8 @@ class RayHandle(private val world: World, private val player: Player) {
         return Ray(
             tile,
             Vector(xRayPoint, yRayPoint),
-            xMap,
-            yMap,
-            xDistanceToStart,
-            yDistanceToStart,
+            Vector(xDistanceToStart, yDistanceToStart),
+            Point(xMap, yMap),
             distance,
             angle,
         )

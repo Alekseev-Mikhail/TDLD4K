@@ -19,26 +19,26 @@ abstract class MovementControl(
 
     val moveToForward = Timer(1_000 / player.maxFps) {
         val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection))
-        player.x = point.vector.x
-        player.z = point.vector.y
+        player.x = point.rayPoint.x
+        player.z = point.rayPoint.y
     }
 
     val moveToBack = Timer(1_000 / player.maxFps) {
         val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection + 180))
-        player.x = point.vector.x
-        player.z = point.vector.y
+        player.x = point.rayPoint.x
+        player.z = point.rayPoint.y
     }
 
     val moveToLeft = Timer(1_000 / player.maxFps) {
         val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection - 90))
-        player.x = point.vector.x
-        player.z = point.vector.y
+        player.x = point.rayPoint.x
+        player.z = point.rayPoint.y
     }
 
     val moveToRight = Timer(1_000 / player.maxFps) {
         val point = rayHandle.ray(player.movementSpeed, Math.toRadians(player.xDirection + 90))
-        player.x = point.vector.x
-        player.z = point.vector.y
+        player.x = point.rayPoint.x
+        player.z = point.rayPoint.y
     }
 
     override fun keyPressed(e: KeyEvent) {

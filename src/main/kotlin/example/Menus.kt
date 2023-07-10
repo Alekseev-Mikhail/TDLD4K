@@ -69,7 +69,7 @@ class Menus(
                 }
 
                 1 -> {
-                    slider.maximum = 100
+                    slider.maximum = 50
                     slider.value = player.renderDistance.roundToInt()
                     val value = slider.value
                     player.renderDistance = value.toDouble()
