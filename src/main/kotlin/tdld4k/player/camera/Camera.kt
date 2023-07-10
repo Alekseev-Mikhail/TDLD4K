@@ -74,7 +74,7 @@ class Camera(
             if (!ray.tile.isAir) {
                 currentSide = getSide(ray, quality)
                 if (lastSide != NONE) {
-                    if (ray.tile != lastRay.tile || lastSide != currentSide) {
+                    if (ray.tile != lastRay.tile || lastSide != currentSide || lastRay.rectangleIndex != ray.rectangleIndex) {
                         tiles.add(ray.tile)
                         polygons.updateAndAdd(lastRay.distance, ray.distance, lastRay.angle, ray.angle, x)
                     }
@@ -114,10 +114,10 @@ class Camera(
             val xDistance = ray.tilePoint.x
             val yDistance = ray.tilePoint.y
             val tileShape = ray.tile.tileShape!!
-            val leftTopX = tileShape.leftTop.x
-            val leftTopY = tileShape.leftTop.y
-            val rightBotX = tileShape.rightBot.x
-            val rightBotY = tileShape.rightBot.y
+            val leftTopX = tileShape.rectangles[ray.rectangleIndex].leftTop.x
+            val leftTopY = tileShape.rectangles[ray.rectangleIndex].leftTop.y
+            val rightBotX = tileShape.rectangles[ray.rectangleIndex].rightBot.x
+            val rightBotY = tileShape.rectangles[ray.rectangleIndex].rightBot.y
             return when {
                 yDistance in leftTopY..leftTopY + quality -> FORWARD
                 yDistance in rightBotY - quality..rightBotY -> BACK

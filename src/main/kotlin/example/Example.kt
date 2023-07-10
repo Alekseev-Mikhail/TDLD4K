@@ -3,6 +3,7 @@ package example
 import tdld4k.Client
 import tdld4k.controllers.MouseMove
 import tdld4k.debug.DebugObject
+import tdld4k.math.Rectangle
 import tdld4k.math.Vector
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
 import tdld4k.world.AABBTile
@@ -49,7 +50,15 @@ fun main() {
     val tileTypes = mapOf(
         '1' to FullTile(GRAY),
         '2' to FullTile(RED),
-        '3' to AABBTile(CYAN, Vector(0.0, 0.0), Vector(0.1, tileSize)),
+        '3' to AABBTile(
+            CYAN,
+            listOf(
+                Rectangle(Vector(0.0, 0.0), Vector(0.1, tileSize)),
+                Rectangle(Vector(0.0, tileSize - 0.1), Vector(tileSize, tileSize)),
+                Rectangle(Vector(tileSize - 0.1, tileSize / 2), Vector(tileSize, tileSize)),
+                Rectangle(Vector(tileSize / 2 - 0.1, tileSize / 2 - 0.1), Vector(tileSize / 2 + 0.1, tileSize / 2 + 0.1)),
+            ),
+        ),
         '4' to AABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
     )
     val world = World(map, mapWidth, tileTypes, tileSize, quality, airCode, errorTile)

@@ -12,14 +12,12 @@ class RayHandle(private val world: World, private val player: Player) {
     fun rayCasting(angle: Double): Ray {
         for (c in 0.0..player.renderDistance step 1 / player.quality) {
             val ray = ray(c, angle)
-            if (!ray.tile.isAir) {
-                if (!ray.tile.isOutOfWorldTile) {
-                    if (ray.tile.tileShape!!.intersection(ray.tilePoint)) {
-                        return ray
-                    }
-                } else {
+            if (!ray.tile.isOutOfWorldTile) {
+                if (ray.rectangleIndex >= 0) {
                     return ray
                 }
+            } else {
+                return ray
             }
         }
         return Ray(Tile())
@@ -42,6 +40,7 @@ class RayHandle(private val world: World, private val player: Player) {
         if (xRayPoint < 0 || yRayPoint < 0 || xMap > edgeX || yMap > edgeY) {
             return Ray(
                 Tile(null, false),
+                0,
                 Vector(xRayPoint, yRayPoint),
                 Vector(xDistanceToStart, yDistanceToStart),
                 Point(xMap, yMap),
@@ -51,11 +50,15 @@ class RayHandle(private val world: World, private val player: Player) {
         }
 
         val tile = world[xMap, yMap]
+        val rayPoint = Vector(xRayPoint, yRayPoint)
+        val tilePoint = Vector(xDistanceToStart, yDistanceToStart)
+        val mapPoint = Point(xMap, yMap)
         return Ray(
             tile,
-            Vector(xRayPoint, yRayPoint),
-            Vector(xDistanceToStart, yDistanceToStart),
-            Point(xMap, yMap),
+            tile.tileShape?.intersection(tilePoint) ?: -1,
+            rayPoint,
+            tilePoint,
+            mapPoint,
             distance,
             angle,
         )

@@ -1,18 +1,18 @@
 package tdld4k.world
 
+import tdld4k.math.Rectangle
 import tdld4k.math.Vector
 import java.awt.Paint
 
 class FullTile(override val paint: Paint) : TileShape {
-    override var leftTop = Vector(0.0, 0.0)
-    override var rightBot = Vector(0.0, 0.0)
+    override val rectangles = listOf(Rectangle(Vector(0.0, 0.0), Vector(0.0, 0.0)))
 
-    override fun intersection(point: Vector): Boolean {
-        return true
+    override fun intersection(point: Vector): Int {
+        return 0
     }
 
     fun setTileSize(value: Double) {
-        rightBot = Vector(value, value)
+        rectangles[0].rightBot = Vector(value, value)
     }
 }
 

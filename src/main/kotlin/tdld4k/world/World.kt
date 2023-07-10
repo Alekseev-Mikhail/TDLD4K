@@ -57,18 +57,17 @@ private fun fromTileTypes(
     if (exampleTile != null) {
         when (exampleTile) {
             is FullTile -> tile = fromFullTile(tileSize, exampleTile.paint)
-            is AABBTile -> tile = fromAABBTile(exampleTile.paint, exampleTile.leftTop, exampleTile.rightBot)
+            is AABBTile -> tile = fromAABBTile(exampleTile.paint, exampleTile.rectangles)
         }
     }
     return findError(tile, fromFullTile(tileSize, errorPaint), quality)
 }
 
 private fun findError(tile: Tile, errorTile: Tile, quality: Double): Tile {
-    val leftTop = tile.tileShape!!.leftTop
-    val rightBot = tile.tileShape.rightBot
-    return if (quality > (rightBot.x - leftTop.x) / 2 || quality > (rightBot.y - leftTop.y) / 2) {
-        errorTile
-    } else {
-        tile
+    tile.tileShape!!.rectangles.forEach { rectangle ->
+        val leftTop = rectangle.leftTop
+        val rightBot = rectangle.rightBot
+        if (quality > (rightBot.x - leftTop.x) / 2 || quality > (rightBot.y - leftTop.y) / 2) return errorTile
     }
+    return tile
 }

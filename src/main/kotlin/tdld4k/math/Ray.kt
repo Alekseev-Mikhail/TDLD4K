@@ -5,6 +5,7 @@ import java.awt.Point
 
 data class Ray(
     val tile: Tile,
+    val rectangleIndex: Int = -1,
     val rayPoint: Vector = Vector(0.0, 0.0),
     val tilePoint: Vector = Vector(0.0, 0.0),
     val mapPoint: Point = Point(0, 0),
