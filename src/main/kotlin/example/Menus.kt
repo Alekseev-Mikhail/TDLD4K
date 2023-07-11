@@ -7,9 +7,11 @@ import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.Paint
 import java.awt.Point
+import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JSlider
 import kotlin.math.roundToInt
+import kotlin.system.exitProcess
 
 class Menus(
     private val client: Client,
@@ -27,6 +29,7 @@ class Menus(
     textPaint,
 ) {
     private val descriptions = mutableListOf<String>()
+    val exitButton = JButton()
     val sliders = mutableListOf<JSlider>()
 
     override fun top(g2d: Graphics2D) {
@@ -38,14 +41,15 @@ class Menus(
             g2d.font = font
 
             var ySlider = 0
-            sliders.forEachIndexed { i, e ->
-                val yText = ySlider + e.height + font.size + margin
-                e.isFocusable = false
-                e.size = Dimension(client.playerFrame.width / 3, e.height)
-                e.location = Point(0, ySlider)
+            sliders.forEachIndexed { i, slider ->
+                val yText = ySlider + slider.height + font.size + margin
+                slider.size = Dimension(client.playerFrame.width / 3, slider.height)
+                slider.location = Point(0, ySlider)
                 g2d.drawString(descriptions[i], margin, yText)
                 ySlider = yText + margin
             }
+
+            exitButton.location = Point(client.playerFrame.width - exitButton.width, 0)
         } else if (player.isShowDebugMenu) {
             super.top(g2d)
         }
@@ -57,6 +61,7 @@ class Menus(
             if (!player.isEscape) {
                 slider.isVisible = false
             }
+            slider.isFocusable = false
             when (i) {
                 0 -> {
                     slider.maximum = 90
@@ -90,6 +95,13 @@ class Menus(
             sliders.add(slider)
             panel.add(slider)
         }
+
+        if (!player.isEscape) {
+            exitButton.isVisible = false
+        }
+        exitButton.text = "Exit"
+        exitButton.addChangeListener { exitFomGame() }
+        panel.add(exitButton)
     }
 
     private fun changeFov(value: Int) {
@@ -105,5 +117,9 @@ class Menus(
     private fun changeQuality(value: Int) {
         player.quality = value.toDouble()
         descriptions[2] = "Quality: $value"
+    }
+
+    private fun exitFomGame() {
+        exitProcess(0)
     }
 }

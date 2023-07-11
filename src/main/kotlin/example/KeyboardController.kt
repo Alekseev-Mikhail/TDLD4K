@@ -63,22 +63,13 @@ class KeyboardController(
         cameraLayers.sliders.forEach { e ->
             e.isVisible = true
         }
+        cameraLayers.exitButton.isVisible = true
         client.setVisibleCursor()
         client.stopFpsCounter()
         moveToForward.stop()
         moveToBack.stop()
         moveToLeft.stop()
         moveToRight.stop()
-    }
-
-    private fun debugVision() {
-        if (!player.isDebugVision) {
-            player.isDebugVision = true
-            client.enableDebugVision()
-        } else {
-            player.isDebugVision = false
-            client.disableDebugVision()
-        }
     }
 
     private fun menuOff() {
@@ -89,8 +80,19 @@ class KeyboardController(
         cameraLayers.sliders.forEach { e ->
             e.isVisible = false
         }
+        cameraLayers.exitButton.isVisible = false
         client.setInvisibleCursor()
         client.startFpsCounter()
+    }
+
+    private fun debugVision() {
+        if (!player.isDebugVision) {
+            player.isDebugVision = true
+            client.enableDebugVision()
+        } else {
+            player.isDebugVision = false
+            client.disableDebugVision()
+        }
     }
 
     private fun fullscreen() {
