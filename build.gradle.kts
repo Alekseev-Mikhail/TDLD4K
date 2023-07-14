@@ -18,6 +18,10 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
 
+    testImplementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("ch.qos.logback:logback-core:1.4.8")
+    implementation("ch.qos.logback:logback-classic:1.4.8")
+
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
     implementation("org.lwjgl", "lwjgl")

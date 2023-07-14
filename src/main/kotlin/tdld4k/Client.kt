@@ -1,12 +1,11 @@
 package tdld4k
 
+import org.slf4j.LoggerFactory
 import tdld4k.player.Player
 import tdld4k.player.camera.Camera
 import tdld4k.world.World
-import java.awt.Cursor
 import java.awt.Image
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.ImageIcon
 
@@ -15,12 +14,13 @@ class Client(
     player: Player,
     clientLife: ClientLife,
 ) {
+    private val logger = LoggerFactory.getLogger(this.javaClass)
     val version: String? = this::class.java.`package`.implementationVersion
-    val camera = Camera(world, player, clientLife)
-    private var currentCursor = Cursor.getDefaultCursor()
+    val camera = Camera(world, player, clientLife, logger)
 
     companion object {
-        fun getShader(name: String): String = Files.readAllBytes(Paths.get("src/main/resources/shaders/$name")).toString()
+        fun getShader(name: String): String =
+            Files.readAllBytes(Paths.get("src/main/resources/shaders/$name")).toString()
 
         fun getImage(name: String): Image = ImageIcon(this::class.java.getResource(name)).image
     }

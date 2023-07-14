@@ -1,12 +1,6 @@
 package tdld4k.player.camera
 
 import org.lwjgl.glfw.Callbacks
-import org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR
-import org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR
-import org.lwjgl.glfw.GLFW.GLFW_OPENGL_COMPAT_PROFILE
-import org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE
-import org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT
-import org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE
 import org.lwjgl.glfw.GLFW.glfwCreateWindow
 import org.lwjgl.glfw.GLFW.glfwDefaultWindowHints
 import org.lwjgl.glfw.GLFW.glfwDestroyWindow
@@ -17,26 +11,16 @@ import org.lwjgl.glfw.GLFW.glfwSetErrorCallback
 import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwSwapInterval
 import org.lwjgl.glfw.GLFW.glfwTerminate
-import org.lwjgl.glfw.GLFW.glfwWindowHint
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 import org.lwjgl.opengl.GL.createCapabilities
-import org.lwjgl.opengl.GL11.GL_TRUE
 import org.lwjgl.opengl.GL46.GL_COLOR_BUFFER_BIT
 import org.lwjgl.opengl.GL46.GL_DEPTH_BUFFER_BIT
-import org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER
-import org.lwjgl.opengl.GL46.GL_TRIANGLES
-import org.lwjgl.opengl.GL46.GL_VERTEX_SHADER
-import org.lwjgl.opengl.GL46.glBindVertexArray
 import org.lwjgl.opengl.GL46.glClear
 import org.lwjgl.opengl.GL46.glClearColor
-import org.lwjgl.opengl.GL46.glDrawArrays
-import org.lwjgl.opengl.GL46.glViewport
 import org.lwjgl.system.MemoryUtil.NULL
 import org.lwjgl.system.MemoryUtil.memUTF8
+import org.slf4j.Logger
 import tdld4k.ClientLife
-import tdld4k.Mesh
-import tdld4k.ShaderModuleData
-import tdld4k.ShaderProgram
 import tdld4k.Window
 import tdld4k.math.RayHandle
 import tdld4k.player.Player
@@ -46,10 +30,10 @@ import java.util.Timer
 import kotlin.system.exitProcess
 
 class Camera(
-    private val world: World,
-    private val player: Player,
-
+    world: World,
+    player: Player,
     private val clientLife: ClientLife,
+    private val logger: Logger,
 ) {
     private val rayHandle = RayHandle(world, player)
     private var translatedPlayer = TranslatedToRadians(0.0, 0.0)
@@ -58,88 +42,74 @@ class Camera(
     val fpsCounter = Timer("fps counter", false)
 
     private val window = Window(NULL, 0, 0)
-    private var shaderProgram: ShaderProgram? = null
-    private var mesh: Mesh? = null
 
-    fun born(width: Int, height: Int, title: String, monitor: Long, share: Long) {
+    constructor(
+        world: World,
+        player: Player,
+        clientLife: ClientLife,
+        logger: Logger,
+        width: Int = 500,
+        height: Int = 500,
+        title: String = "TDLD4K",
+        monitor: Long = NULL,
+        share: Long = NULL,
+    ) : this(world, player, clientLife, logger) {
+        createWindow(width, height, title, monitor, share)
+    }
+
+    private fun createWindow(width: Int, height: Int, title: String, monitor: Long, share: Long) {
         glfwSetErrorCallback { error, description -> errorCallback(error, memUTF8(description)) }
 
         if (!glfwInit()) {
-            die(false, "Unable to initialize GLFW")
+            cleanup(false, "Unable to initialize GLFW")
         }
 
         window.windowId = glfwCreateWindow(width, height, title, monitor, share)
         window.width = width
         window.height = height
         if (window.windowId == NULL) {
-            die(false, "Failed to create the GLFW window")
+            cleanup(false, "Failed to create the GLFW window")
         }
 
         glfwDefaultWindowHints()
         glfwMakeContextCurrent(window.windowId)
         glfwSwapInterval(1)
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
         clientLife.born(window)
 
-        // TODO Logging successful go to live
-        live()
+        logger.info("Window created successfully")
     }
 
-    private fun live() {
+    private fun startRenderLoop() {
         createCapabilities()
-
-        shaderProgram = ShaderProgram(
-            listOf(
-                ShaderModuleData("scene.vert", GL_VERTEX_SHADER),
-                ShaderModuleData("scene.frag", GL_FRAGMENT_SHADER),
-            ),
-        )
-        mesh = Mesh(
-            floatArrayOf(
-                0.0f, 0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-            ),
-            3,
-        )
 
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f)
 
         while (!glfwWindowShouldClose(window.windowId)) {
-            // TODO Render
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-            glViewport(0, 0, window.width, window.height)
-
-            shaderProgram!!.bind()
-
-            glBindVertexArray(mesh!!.vaoId)
-            glDrawArrays(GL_TRIANGLES, 0, mesh!!.numVertices)
-            glBindVertexArray(0)
-
-            shaderProgram!!.unbind()
+            // TODO Render
 
             glfwSwapBuffers(window.windowId)
             glfwPollEvents()
             clientLife.live(window)
         }
 
-        // TODO Logging successful go to die
-        die(true)
+        logger.info("Render loop stopped")
+        cleanup()
     }
 
-    private fun die(isNatural: Boolean, description: String = "") {
+    fun cleanup(errorDescription: String = "") {
         clientLife.die(window)
         Callbacks.glfwFreeCallbacks(window.windowId)
         glfwDestroyWindow(window.windowId)
         glfwTerminate()
         glfwSetErrorCallback(null)?.free()
-        // TODO Logging success if isNatural is true and logging bad new if isNatural is false
+        if (errorDescription.isBlank()) {
+            logger.info("Application stopped successfully without problems")
+        } else {
+            logger.error("Application stopped with problem: $errorDescription")
+        }
         exitProcess(0)
     }
 

@@ -74,7 +74,7 @@ fun main() {
     )
     val windowEventHandle = WindowEventHandle()
     val client = Client(world, player, windowEventHandle)
-    client.camera.born(500, 500, "Test", NULL, NULL)
+    client.camera.createWindow(500, 500, "Test", NULL, NULL)
 //    val cameraLayers = Menus(
 //        client,
 //        player,
