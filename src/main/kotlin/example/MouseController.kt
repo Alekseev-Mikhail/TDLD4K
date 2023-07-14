@@ -16,10 +16,10 @@ class MouseController(
     var secondCustomCursor: Cursor = Cursor.getDefaultCursor()
 
     override fun mouseMovedInFreeze() {
-        if (MouseInfo.getPointerInfo().location.y > client.getFrameCentre().y) {
-            client.setCurrentCursor(firstCustomCursor)
-        } else {
-            client.setCurrentCursor(secondCustomCursor)
-        }
+//        if (MouseInfo.getPointerInfo().location.y > client.getFrameCentre().y) {
+//            client.setCurrentCursor(firstCustomCursor)
+//        } else {
+//            client.setCurrentCursor(secondCustomCursor)
+//        }
     }
 }

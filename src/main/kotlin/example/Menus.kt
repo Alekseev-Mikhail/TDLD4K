@@ -35,7 +35,7 @@ class Menus(
     override fun top(g2d: Graphics2D) {
         if (player.isEscape) {
             g2d.paint = labelPaint
-            g2d.fillRect(0, 0, client.playerFrame.width, client.playerFrame.height)
+//            g2d.fillRect(0, 0, client.playerFrame.width, client.playerFrame.height)
 
             g2d.paint = textPaint
             g2d.font = font
@@ -43,13 +43,13 @@ class Menus(
             var ySlider = 0
             sliders.forEachIndexed { i, slider ->
                 val yText = ySlider + slider.height + font.size + margin
-                slider.size = Dimension(client.playerFrame.width / 3, slider.height)
+//                slider.size = Dimension(client.playerFrame.width / 3, slider.height)
                 slider.location = Point(0, ySlider)
                 g2d.drawString(descriptions[i], margin, yText)
                 ySlider = yText + margin
             }
 
-            exitButton.location = Point(client.playerFrame.width - exitButton.width, 0)
+//            exitButton.location = Point(client.playerFrame.width - exitButton.width, 0)
         } else if (player.isShowDebugMenu) {
             super.top(g2d)
         }

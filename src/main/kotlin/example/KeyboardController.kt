@@ -64,8 +64,8 @@ class KeyboardController(
             e.isVisible = true
         }
         cameraLayers.exitButton.isVisible = true
-        client.setVisibleCursor()
-        client.stopFpsCounter()
+//        client.setVisibleCursor()
+//        client.stopFpsCounter()
         moveToForward.stop()
         moveToBack.stop()
         moveToLeft.stop()
@@ -81,29 +81,29 @@ class KeyboardController(
             e.isVisible = false
         }
         cameraLayers.exitButton.isVisible = false
-        client.setInvisibleCursor()
-        client.startFpsCounter()
+//        client.setInvisibleCursor()
+//        client.startFpsCounter()
     }
 
     private fun debugVision() {
         if (!player.isDebugVision) {
             player.isDebugVision = true
-            client.enableDebugVision()
+//            client.enableDebugVision()
         } else {
             player.isDebugVision = false
-            client.disableDebugVision()
+//            client.disableDebugVision()
         }
     }
 
     private fun fullscreen() {
         if (player.isFullscreen) {
             player.isFullscreen = false
-            client.setWindowedMode()
-            client.playerFrame.pack()
-            client.moveToScreenCenter()
+//            client.setWindowedMode()
+//            client.playerFrame.pack()
+//            client.moveToScreenCenter()
         } else {
             player.isFullscreen = true
-            client.setFullscreenMode()
+//            client.setFullscreenMode()
         }
     }
 

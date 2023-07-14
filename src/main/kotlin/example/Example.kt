@@ -1,30 +1,19 @@
 package example
 
+import org.lwjgl.system.MemoryUtil.NULL
 import tdld4k.Client
-import tdld4k.controllers.MouseMove
-import tdld4k.debug.DebugObject
 import tdld4k.math.Rectangle
 import tdld4k.math.Vector
 import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
-import java.awt.Color
 import java.awt.Color.BLACK
 import java.awt.Color.BLUE
 import java.awt.Color.CYAN
 import java.awt.Color.GRAY
 import java.awt.Color.RED
 import java.awt.Color.YELLOW
-import java.awt.Font
-import java.awt.Font.PLAIN
-import java.awt.Point
-import java.awt.Toolkit
-import java.awt.event.KeyEvent.VK_A
-import java.awt.event.KeyEvent.VK_D
-import java.awt.event.KeyEvent.VK_S
-import java.awt.event.KeyEvent.VK_W
-import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 fun main() {
     val map = "  1e1" +
@@ -56,7 +45,10 @@ fun main() {
                 Rectangle(Vector(0.0, 0.0), Vector(0.1, tileSize)),
                 Rectangle(Vector(0.0, tileSize - 0.1), Vector(tileSize, tileSize)),
                 Rectangle(Vector(tileSize - 0.1, tileSize / 2), Vector(tileSize, tileSize)),
-                Rectangle(Vector(tileSize / 2 - 0.1, tileSize / 2 - 0.1), Vector(tileSize / 2 + 0.1, tileSize / 2 + 0.1)),
+                Rectangle(
+                    Vector(tileSize / 2 - 0.1, tileSize / 2 - 0.1),
+                    Vector(tileSize / 2 + 0.1, tileSize / 2 + 0.1),
+                ),
             ),
         ),
         '4' to AABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
@@ -80,63 +72,65 @@ fun main() {
         isFreezeMovement = false,
         isFreezeRotation = false,
     )
+    val windowEventHandle = WindowEventHandle()
+    val client = Client(world, player, windowEventHandle)
+    client.camera.born(500, 500, "Test", NULL, NULL)
+//    val cameraLayers = Menus(
+//        client,
+//        player,
+//        Color(82, 82, 82, 190),
+//        8,
+//        Font("debug menu", PLAIN, 25),
+//        Color(240, 240, 240, 220),
+//        Point(5, 5),
+//    )
 
-    val client = Client(world, player)
-    val cameraLayers = Menus(
-        client,
-        player,
-        Color(82, 82, 82, 190),
-        8,
-        Font("debug menu", PLAIN, 25),
-        Color(240, 240, 240, 220),
-        Point(5, 5),
-    )
-    val mouseMove = MouseMove(isRobot = false, isFreezeMove = false)
-    val keyboardController = KeyboardController(
-        world,
-        VK_W,
-        VK_S,
-        VK_A,
-        VK_D,
-        client,
-        player,
-        cameraLayers,
-        mouseMove,
-    )
-    val autoEscape = AutoEscape(keyboardController)
-    val mouseController = MouseController(client, player, mouseMove)
-    val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        Client.getImage("/example/cursor.png"),
-        Point(0, 0),
-        "first custom cursor",
-    )
-    val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        Client.getImage("/example/cursor1.png"),
-        Point(0, 0),
-        "second custom cursor",
-    )
+//    val mouseMove = MouseMove(isRobot = false, isFreezeMove = false)
+//    val keyboardController = KeyboardController(
+//        world,
+//        VK_W,
+//        VK_S,
+//        VK_A,
+//        VK_D,
+//        client,
+//        player,
+//        cameraLayers,
+//        mouseMove,
+//    )
+//    val autoEscape = AutoEscape(keyboardController)
+//    val mouseController = MouseController(client, player, mouseMove)
+//    val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+//        Client.getImage("/example/cursor.png"),
+//        Point(0, 0),
+//        "first custom cursor",
+//    )
+//    val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+//        Client.getImage("/example/cursor1.png"),
+//        Point(0, 0),
+//        "second custom cursor",
+//    )
+//
+//    mouseController.firstCustomCursor = firstCustomCursor
+//    mouseController.secondCustomCursor = secondCustomCursor
+//    client.setCurrentCursor(firstCustomCursor)
 
-    mouseController.firstCustomCursor = firstCustomCursor
-    mouseController.secondCustomCursor = secondCustomCursor
-    client.setCurrentCursor(firstCustomCursor)
+//    client.initCamera()
+//    client.playerFrame.addKeyListener(keyboardController)
+//    client.playerFrame.addMouseMotionListener(mouseController)
+//    client.playerFrame.addFocusListener(autoEscape)
+//    client.playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
 
-    client.setCamera()
-    client.playerFrame.addKeyListener(keyboardController)
-    client.playerFrame.addMouseMotionListener(mouseController)
-    client.playerFrame.addFocusListener(autoEscape)
-    client.playerFrame.defaultCloseOperation = EXIT_ON_CLOSE
+//    client.setInvisibleCursor()
+//    client.playerFrame.title = "Example"
+//    client.playerFrame.iconImage = Client.getImage("/example/icon.jpg")
+//    client.playerFrame.isVisible = true
+//    client.changeFrameSize(800, 800)
+//    client.playerFrame.pack()
 
-    client.setInvisibleCursor()
-    client.playerFrame.title = "Example"
-    client.playerFrame.iconImage = Client.getImage("/example/icon.jpg")
-    client.playerFrame.isVisible = true
-    client.changeFrameSize(800, 800)
-    client.playerFrame.pack()
-
-    cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", client.version))))
-    cameraLayers.addDebugObject(player)
-    client.setCameraLayers(cameraLayers)
-    client.addComponents()
-    player.addListenerForTechOptions { client.playerFrame.repaint() }
-    client.startFpsCounter()
+//    cameraLayers.addDebugObject(DebugObject(mutableMapOf(Pair("Engine Version", client.version))))
+//    cameraLayers.addDebugObject(player)
+//    client.setCameraLayers(cameraLayers)
+//    client.addComponents()
+//    player.addListenerForTechOptions { client.playerFrame.repaint() }
+//    client.startFpsCounter()
 }
