@@ -1,19 +1,22 @@
 package example
 
-import org.lwjgl.system.MemoryUtil.NULL
+import example.controller.KeyboardController
+import example.controller.MouseController
+import example.gui.EscapeGUI
+import example.gui.MainGUI
 import tdld4k.Client
-import tdld4k.math.Rectangle
-import tdld4k.math.Vector
-import tdld4k.player.PlayerHeightLimits.MID_HEIGHT
+import tdld4k.camera.handler.Key.KEY_A
+import tdld4k.camera.handler.Key.KEY_D
+import tdld4k.camera.handler.Key.KEY_S
+import tdld4k.camera.handler.Key.KEY_W
+import tdld4k.util.BLACK
+import tdld4k.util.Cursor
+import tdld4k.util.Paint
+import tdld4k.util.geometry.PointD
+import tdld4k.util.geometry.Rectangle
 import tdld4k.world.AABBTile
 import tdld4k.world.FullTile
 import tdld4k.world.World
-import java.awt.Color.BLACK
-import java.awt.Color.BLUE
-import java.awt.Color.CYAN
-import java.awt.Color.GRAY
-import java.awt.Color.RED
-import java.awt.Color.YELLOW
 
 fun main() {
     val map = "  1e1" +
@@ -35,46 +38,68 @@ fun main() {
     val tileSize = 2.0
     val quality = 50.0
     val airCode = ' '
-    val errorTile = BLUE
+    val errorTile = Paint(3, 165, 252)
     val tileTypes = mapOf(
-        '1' to FullTile(GRAY),
-        '2' to FullTile(RED),
+        '1' to FullTile(Paint(0, 0, 0)),
+        '2' to FullTile(Paint(255, 21, 0)),
         '3' to AABBTile(
-            CYAN,
+            Paint(0, 255, 42),
             listOf(
-                Rectangle(Vector(0.0, 0.0), Vector(0.1, tileSize)),
-                Rectangle(Vector(0.0, tileSize - 0.1), Vector(tileSize, tileSize)),
-                Rectangle(Vector(tileSize - 0.1, tileSize / 2), Vector(tileSize, tileSize)),
+                Rectangle(PointD(0.0, 0.0), PointD(0.1, tileSize)),
+                Rectangle(PointD(0.0, tileSize - 0.1), PointD(tileSize, tileSize)),
+                Rectangle(PointD(tileSize - 0.1, tileSize / 2), PointD(tileSize, tileSize)),
                 Rectangle(
-                    Vector(tileSize / 2 - 0.1, tileSize / 2 - 0.1),
-                    Vector(tileSize / 2 + 0.1, tileSize / 2 + 0.1),
+                    PointD(tileSize / 2 - 0.1, tileSize / 2 - 0.1),
+                    PointD(tileSize / 2 + 0.1, tileSize / 2 + 0.1),
                 ),
             ),
         ),
-        '4' to AABBTile(YELLOW, Vector(tileSize / 4, tileSize / 4), Vector(tileSize * 0.75, tileSize * 0.75)),
+        '4' to AABBTile(
+            Paint(229, 255, 0),
+            PointD(tileSize / 4, tileSize / 4),
+            PointD(tileSize * 0.75, tileSize * 0.75),
+        ),
     )
     val world = World(map, mapWidth, tileTypes, tileSize, quality, airCode, errorTile)
     world.outOfWorldPaint = BLACK
 
-    val player = ExamplePlayer(
+    val player = Player(
         tileSize + tileSize / 2,
-        MID_HEIGHT.value,
         tileSize + tileSize / 2,
-        270.0,
-        1.0,
+        0.5,
+        0.05,
+        0.05,
+        0.001,
+    )
+    player.horizontalDirection = 90.0
+    player.verticalDirection = 1.0
+    val settings = Settings(
         75.0,
         quality,
         400.0,
-        0.05,
-        0.2,
-        0.005,
-        60,
-        isFreezeMovement = false,
-        isFreezeRotation = false,
+        KEY_W,
+        KEY_S,
+        KEY_A,
+        KEY_D,
     )
-    val windowEventHandle = WindowEventHandle()
-    val client = Client(world, player, windowEventHandle)
-    client.camera.createWindow(500, 500, "Test", NULL, NULL)
+    val client = Client()
+
+    val happyCursor = Cursor("example/cursors/happy_cursor.png")
+    val sadCursor = Cursor("example/cursors/sad_cursor.png")
+
+    val mainGUI = MainGUI(world, player, settings)
+    val escapeGUI = EscapeGUI()
+    val keyboardController = KeyboardController(world, player, settings, mainGUI, escapeGUI)
+    val mouseController = MouseController(player, escapeGUI, happyCursor, sadCursor)
+
+    client.createCamera { window ->
+        window.content = mainGUI
+        window.setIcon("example/icon.jpg")
+        window.createCursor(happyCursor, sadCursor)
+        window.cursor = happyCursor
+        keyboardController.setCallback(window)
+        mouseController.setCallback(window)
+    }
 //    val cameraLayers = Menus(
 //        client,
 //        player,
@@ -100,12 +125,12 @@ fun main() {
 //    val autoEscape = AutoEscape(keyboardController)
 //    val mouseController = MouseController(client, player, mouseMove)
 //    val firstCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-//        Client.getImage("/example/cursor.png"),
+//        Client.getImage("/example/happy_cursor.png"),
 //        Point(0, 0),
 //        "first custom cursor",
 //    )
 //    val secondCustomCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-//        Client.getImage("/example/cursor1.png"),
+//        Client.getImage("/example/sad_cursor.png"),
 //        Point(0, 0),
 //        "second custom cursor",
 //    )
@@ -134,3 +159,5 @@ fun main() {
 //    player.addListenerForTechOptions { client.playerFrame.repaint() }
 //    client.startFpsCounter()
 }
+
+// fun getImage(name: String): Image = ImageIcon(Client::class.java.getResource(name)).image

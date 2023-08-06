@@ -1,6 +1,6 @@
 package tdld4k.world
 
-import java.awt.Paint
+import tdld4k.util.Paint
 
 private var errorPaint = ERROR_PAINT
 

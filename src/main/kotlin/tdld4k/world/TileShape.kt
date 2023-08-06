@@ -1,12 +1,12 @@
 package tdld4k.world
 
-import tdld4k.math.Rectangle
-import tdld4k.math.Vector
-import java.awt.Paint
+import tdld4k.util.Paint
+import tdld4k.util.geometry.PointD
+import tdld4k.util.geometry.Rectangle
 
 interface TileShape {
     val rectangles: List<Rectangle>
     val paint: Paint
 
-    fun intersection(point: Vector): Int
+    fun intersection(pointD: PointD): Int
 }
